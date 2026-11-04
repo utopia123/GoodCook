@@ -136,8 +136,8 @@ export function DishesBrowser({
 
   return (
     <>
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="text-sm text-secondary">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="min-w-0 flex-1 truncate text-sm text-secondary">
           {mode
             ? t('batch.selected', { n: picked.size })
             : t('batch.hint')}

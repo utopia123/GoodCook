@@ -106,6 +106,9 @@ export function OrderPicker({
     <div>
       {(shownCats.length > 0 || hasUncategorized) && (
         <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="shrink-0 pr-0.5 text-[11px] font-medium tracking-wide text-secondary">
+            {t('picker.groupCategory')}
+          </span>
           <button
             type="button"
             onClick={() => setActiveCat('')}
@@ -151,6 +154,9 @@ export function OrderPicker({
       )}
       {allTags.length > 0 && (
         <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className="shrink-0 pr-0.5 text-[11px] font-medium tracking-wide text-secondary">
+            {t('picker.groupTag')}
+          </span>
           <button
             type="button"
             onClick={() => setActiveTag('')}

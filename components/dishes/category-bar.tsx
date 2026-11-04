@@ -50,17 +50,25 @@ export function CategoryBar({
     key === 'all' ? '/dishes' : `/dishes?cat=${encodeURIComponent(key)}`
 
   return (
-    <div className="mb-4 flex items-center gap-2">
-      <nav
-        aria-label={t('dishes.manage')}
-        className="flex flex-1 flex-wrap items-center gap-2 py-1"
-      >
-        {tabs.map((tab) => (
-          <Link
-            key={tab.key}
-            href={href(tab.key)}
-            className="shrink-0"
+    <div className="mb-4">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <span className="text-[11px] font-medium tracking-wide text-secondary">
+          {t('picker.groupCategory')}
+        </span>
+        <CategoryManager categories={categories}>
+          <button
+            type="button"
+            className="mf-inset flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs text-secondary hover:text-ink"
+            title={t('dishes.manage')}
           >
+            <Settings2 className="h-4 w-4" />
+            <span className="hidden min-[420px]:inline">{t('dishes.manage')}</span>
+          </button>
+        </CategoryManager>
+      </div>
+      <nav aria-label={t('dishes.manage')} className="flex flex-wrap items-center gap-2">
+        {tabs.map((tab) => (
+          <Link key={tab.key} href={href(tab.key)} className="shrink-0">
             <span className={tabClass(current === tab.key)}>
               {tab.label}
               <span className="ml-1.5 opacity-60">{tab.count}</span>
@@ -68,16 +76,6 @@ export function CategoryBar({
           </Link>
         ))}
       </nav>
-      <CategoryManager categories={categories}>
-        <button
-          type="button"
-          className="mf-inset flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs text-secondary hover:text-ink"
-          title={t('dishes.manage')}
-        >
-          <Settings2 className="h-4 w-4" />
-          <span className="hidden min-[420px]:inline">{t('dishes.manage')}</span>
-        </button>
-      </CategoryManager>
     </div>
   )
 }
