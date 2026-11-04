@@ -91,9 +91,7 @@ export default async function DishesPage({
                   name: d.name,
                   categoryId: d.categoryId,
                 }))}
-                categoryName={(id: string | null) =>
-                  id ? (categoryName.get(id) ?? null) : null
-                }
+                categoryNames={Object.fromEntries(categoryName)}
               >
                 <Button variant="trough" size="sm">
                   <FolderPlus className="h-4 w-4" />

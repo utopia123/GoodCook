@@ -28,12 +28,13 @@ export type PickDish = {
 export function CategoryAssign({
   category,
   dishes,
-  categoryName,
+  categoryNames,
   children,
 }: {
   category: { id: string; name: string }
   dishes: PickDish[]
-  categoryName: (id: string | null) => string | null
+  /** 分类 id → 名称（服务端传入的普通对象，不能传函数） */
+  categoryNames: Record<string, string>
   children: React.ReactNode
 }) {
   const router = useRouter()
@@ -107,7 +108,9 @@ export function CategoryAssign({
             <ul className="max-h-[55vh] space-y-1.5 overflow-y-auto pr-0.5">
               {list.map((d) => {
                 const on = picked.has(d.id)
-                const current = categoryName(d.categoryId)
+                const current = d.categoryId
+                  ? (categoryNames[d.categoryId] ?? null)
+                  : null
                 return (
                   <li key={d.id}>
                     <button
