@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { MealCard } from '@/components/meals/meal-card'
 import { CreateMealDialog } from '@/components/meals/create-meal-dialog'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { PalettePicker } from '@/components/me/palette-picker'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,6 +58,12 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* 外观快捷入口：明暗 + 配色 */}
+      <div className="mb-3 flex items-center justify-end gap-2">
+        <PalettePicker />
+        <ThemeToggle />
+      </div>
+
       {/* 问候 hero：绿色调面 */}
       <div className="mf-tonal mb-6 overflow-hidden p-5">
         <div className="relative">
