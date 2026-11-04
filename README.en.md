@@ -37,6 +37,24 @@ curl -O https://raw.githubusercontent.com/utopia123/GoodCook/main/docker-compose
 docker compose up -d
 ```
 
+Or save the following as `docker-compose.yml` manually:
+
+```yaml
+services:
+  goodcook:
+    image: ghcr.io/utopia123/goodcook:latest
+    # build: .
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Asia/Shanghai
+```
+
 ### docker run
 
 ```bash
@@ -47,8 +65,6 @@ docker run -d --name goodcook \
   ghcr.io/utopia123/goodcook:latest
 ```
 
-> ⚠️ GHCR packages are **private** by default: after the first build, go to the repo's `Packages` settings and set the package to **Public** so NAS devices can pull anonymously.
-
 ### Build from source
 
 ```bash
@@ -57,9 +73,23 @@ cd GoodCook
 docker compose up -d --build
 ```
 
-Open `http://<NAS>:3000` — the first registered user becomes admin. All state lives in the mounted `data` directory (SQLite + images); copy it to back up or migrate.
+### ⚠️ Two one-time steps before first deploy
+
+1. Enable workflows on the repo's `Actions` tab (disabled by default on forks), then trigger **Run workflow** or push once
+2. After the first successful build, go to the repo's `Packages` → package settings → set to **Public** so NAS devices can pull anonymously
+
+### Common operations
+
+```bash
+docker compose pull && docker compose up -d   # upgrade to latest image
+docker compose logs -f                        # view logs
+```
+
+Backup: copy the `./data` folder next to your compose file — that's the complete backup (database + all images).
 
 **Migrating from upstream GanCook**: point this fork at the same `data` directory — the schema migrates incrementally and everything (accounts, meals, images) is preserved.
+
+Open `http://<NAS>:3000` — the first registered user becomes admin.
 
 ## 🛠️ Development
 

@@ -37,6 +37,30 @@ curl -O https://raw.githubusercontent.com/utopia123/GoodCook/main/docker-compose
 docker compose up -d
 ```
 
+或手动把下面内容保存为 `docker-compose.yml`：
+
+```yaml
+services:
+  goodcook:
+    # GoodCook 镜像：由 GitHub Actions 自动构建（每次推送 main 自动更新）
+    image: ghcr.io/utopia123/goodcook:latest
+    # 源码自行构建：注释上面 image 一行，取消下一行注释
+    # build: .
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      # 数据目录（SQLite + 上传图片）。备份只需复制 ./data
+      - ./data:/data
+      # Docker 套接字：启用「家庭管理 → 关于与更新」的网页端一键更新。
+      # 若你的环境没有 Docker 守护进程或不想要此功能，删掉这行即可。
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # 全部可选。开箱即用，无需配置任何密钥（首次启动自动生成并持久化到 ./data）。
+      TZ: Asia/Shanghai
+```
+
 ### 方式二：docker run
 
 ```bash
@@ -47,8 +71,6 @@ docker run -d --name goodcook \
   ghcr.io/utopia123/goodcook:latest
 ```
 
-> ⚠️ 首次构建镜像后，GHCR 包默认是**私有**的：到仓库的 `Packages` 页 → 进入包设置 → 改为 **Public**，NAS 才能匿名拉取。
-
 ### 方式三：源码构建
 
 ```bash
@@ -57,9 +79,23 @@ cd GoodCook
 docker compose up -d --build   # compose 里注释 image、启用 build 即可
 ```
 
-打开 `http://<NAS地址>:3000`，第一个注册的人即成为管理员。数据全部落在 `data` 目录（SQLite + 图片），备份/迁移只需复制该目录。
+### ⚠️ 首次部署前的两个一次性步骤
+
+1. 仓库的 `Actions` 页启用 workflows（fork 仓库默认可能禁用），手动 **Run workflow** 或推一次代码触发构建
+2. 构建成功后，进入仓库 `Packages` → 包设置 → 改为 **Public**，NAS 才能匿名拉取
+
+### 常用运维
+
+```bash
+docker compose pull && docker compose up -d   # 升级到最新镜像
+docker compose logs -f                        # 查看日志
+```
+
+备份：直接复制 compose 目录下的 `./data` 文件夹，即为完整备份（数据库 + 全部图片）。
 
 **从原版 GanCook 迁移**：把原版挂载的 `data` 目录整体复制给本版本使用即可——数据库结构纯增量迁移，账号、饭局、图片全部保留。
+
+打开 `http://<NAS地址>:3000`，第一个注册的人即成为管理员。
 
 ## 🛠️ 本地开发
 
