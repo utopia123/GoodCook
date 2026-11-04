@@ -50,15 +50,21 @@ export function CategoryBar({
     key === 'all' ? '/dishes' : `/dishes?cat=${encodeURIComponent(key)}`
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="mb-4 flex items-center gap-2">
       <nav
         aria-label={t('dishes.manage')}
-        className="-mx-4 flex flex-1 items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 sm:pb-0"
+        className="-mx-4 flex flex-1 items-center gap-2 overflow-x-auto px-4 py-1 sm:mx-0 sm:px-0"
       >
         {tabs.map((tab) => (
-          <Link key={tab.key} href={href(tab.key)} className={tabClass(current === tab.key)}>
-            {tab.label}
-            <span className="ml-1.5 opacity-60">{tab.count}</span>
+          <Link
+            key={tab.key}
+            href={href(tab.key)}
+            className="shrink-0"
+          >
+            <span className={tabClass(current === tab.key)}>
+              {tab.label}
+              <span className="ml-1.5 opacity-60">{tab.count}</span>
+            </span>
           </Link>
         ))}
       </nav>

@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Languages, KeyRound, Settings, LogOut } from 'lucide-react'
+import { Languages, KeyRound, Settings, LogOut, Palette } from 'lucide-react'
 import { List, Row } from '@/components/ui/list'
 import { IconChip } from '@/components/ui/icon-chip'
 import { LanguageSwitch } from '@/components/language-switch'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { ChangePassword } from '@/components/me/change-password'
 import { useT } from '@/components/i18n-provider'
 import { logout } from '@/lib/actions/auth'
@@ -25,6 +26,16 @@ export function SettingsList({ isAdmin }: { isAdmin: boolean }) {
           }
           title={t('me.language')}
           trailing={<LanguageSwitch className="w-[136px]" />}
+          chevron={false}
+        />
+        <Row
+          leading={
+            <IconChip>
+              <Palette />
+            </IconChip>
+          }
+          title={t('theme.title')}
+          trailing={<ThemeToggle />}
           chevron={false}
         />
         <Row

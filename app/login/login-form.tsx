@@ -72,7 +72,7 @@ export function LoginForm({
       <div className="mb-4 h-20 w-20 overflow-hidden rounded-3xl">
         <Image
           src="/logo.webp"
-          alt="好厨子"
+          alt="GoodCook"
           width={80}
           height={80}
           className="h-full w-full object-cover"

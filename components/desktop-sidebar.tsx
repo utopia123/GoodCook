@@ -6,13 +6,14 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useT } from '@/components/i18n-provider'
 import { NAV_TABS } from '@/components/bottom-nav'
+import { ThemeToggle } from '@/components/theme-toggle'
 
-/** 桌面端左侧导航栏（lg 及以上显示，手机端由 BottomNav 接管） */
+/** 桌面端左侧导航栏（lg 及以上显示）：固定整高磨砂玻璃栏 */
 export function DesktopSidebar() {
   const pathname = usePathname()
   const t = useT()
   return (
-    <aside className="sticky top-0 hidden h-dvh w-56 shrink-0 flex-col px-4 py-6 xl:w-60 lg:flex">
+    <aside className="mf-sidebar fixed inset-y-0 left-0 z-40 hidden w-60 flex-col px-4 py-6 xl:w-64 lg:flex">
       {/* 品牌 */}
       <Link href="/home" className="mb-8 flex items-center gap-2.5 px-2">
         <Image
@@ -41,7 +42,7 @@ export function DesktopSidebar() {
                 'flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[15px] font-medium transition-colors',
                 active
                   ? 'bg-accent/12 font-semibold text-accent'
-                  : 'text-secondary hover:bg-black/5 hover:text-ink',
+                  : 'text-secondary hover:bg-black/5 hover:text-ink dark:hover:bg-white/5',
               )}
             >
               <Icon className="h-5 w-5" strokeWidth={active ? 2.2 : 1.8} />
@@ -51,8 +52,11 @@ export function DesktopSidebar() {
         })}
       </nav>
 
-      {/* 底部留白：整栏高度撑满，导航靠上 */}
+      {/* 底部：外观切换 */}
       <div className="flex-1" />
+      <div className="border-t border-[var(--mf-glass-border)] pt-3">
+        <ThemeToggle className="w-full" />
+      </div>
     </aside>
   )
 }

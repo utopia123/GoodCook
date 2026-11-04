@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, UtensilsCrossed, ChefHat, Sprout, User } from 'lucide-react'
+import { Home, UtensilsCrossed, ChefHat, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/components/i18n-provider'
 
@@ -11,7 +11,6 @@ export const NAV_TABS = [
   { href: '/home', key: 'nav.home', icon: Home },
   { href: '/meals', key: 'nav.meals', icon: UtensilsCrossed },
   { href: '/dishes', key: 'nav.dishes', icon: ChefHat },
-  { href: '/wall', key: 'nav.wall', icon: Sprout },
   { href: '/me', key: 'nav.me', icon: User },
 ] as const
 

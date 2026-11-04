@@ -3,7 +3,7 @@ import type { Locale } from './config'
 export type Messages = Record<string, string>
 
 const zh: Messages = {
-  'app.name': '好厨子',
+  'app.name': 'GoodCook',
   // common
   'common.save': '保存',
   'common.saved': '已保存',
@@ -47,7 +47,7 @@ const zh: Messages = {
   'deadline.hours': '{n} 小时后截止点菜',
   'deadline.at': '{date} {time} 截止',
   // setup
-  'setup.welcome': '欢迎使用好厨子',
+  'setup.welcome': '欢迎使用 GoodCook',
   'setup.step1': '先建立你们家的小厨房，你将成为管理员',
   'setup.step2': '设置你的 6 位登录密码',
   'setup.familyName': '家庭名称',
@@ -59,7 +59,7 @@ const zh: Messages = {
   'setup.creating': '创建中…',
   'setup.errName': '请给自己起个昵称',
   // login
-  'login.title': '{family} · 好厨子',
+  'login.title': '{family} · GoodCook',
   'login.subLogin': '点头像选择你是谁',
   'login.subRegister': '加入家庭，开始干饭',
   'login.enterPin': '输入 6 位密码',
@@ -151,18 +151,11 @@ const zh: Messages = {
   'dishes.catRename': '重命名',
   'dishes.noMatchTitle': '这个分类下还没有菜品',
   'dishes.noMatchDesc': '点右上角「添加」把菜收进来，或在编辑菜品时选择分类。',
-  // wall
-  'wall.title': '贡献墙',
-  'wall.sub': '谁在为这个家下厨与张罗',
-  'wall.emptyTitle': '还没有贡献记录',
-  'wall.emptyDesc': '开几顿饭局、做几顿饭、点几次菜，绿格子就会慢慢长出来。',
-  'wall.cook': '做饭 {n} 次',
-  'wall.order': '点菜 {n} 次',
-  'wall.streak': '连续 {n} 天',
-  'wall.cookLabel': '做饭',
-  'wall.orderLabel': '点菜',
-  'wall.less': '少',
-  'wall.more': '多',
+  // 外观主题
+  'theme.title': '外观',
+  'theme.light': '浅色',
+  'theme.dark': '深色',
+  'theme.system': '跟随系统',
   // me
   'me.title': '我的',
   'me.admin': '管理员',
@@ -273,7 +266,7 @@ const zh: Messages = {
 }
 
 const en: Messages = {
-  'app.name': 'Goodcook',
+  'app.name': 'GoodCook',
   'common.save': 'Save',
   'common.saved': 'Saved',
   'common.delete': 'Delete',
@@ -310,7 +303,7 @@ const en: Messages = {
   'deadline.minutes': 'Closes in {n} min',
   'deadline.hours': 'Closes in {n} h',
   'deadline.at': 'Closes {date} {time}',
-  'setup.welcome': 'Welcome to Goodcook',
+  'setup.welcome': 'Welcome to GoodCook',
   'setup.step1': "Set up your family kitchen — you'll be the admin",
   'setup.step2': 'Set your 6-digit password',
   'setup.familyName': 'Family name',
@@ -321,7 +314,7 @@ const en: Messages = {
   'setup.prev': 'Back',
   'setup.creating': 'Creating…',
   'setup.errName': 'Please enter a nickname',
-  'login.title': '{family} · Goodcook',
+  'login.title': '{family} · GoodCook',
   'login.subLogin': 'Tap your avatar to pick who you are',
   'login.subRegister': 'Join the family and start ordering',
   'login.enterPin': 'Enter your 6-digit code',
@@ -408,18 +401,11 @@ const en: Messages = {
   'dishes.catRename': 'Rename',
   'dishes.noMatchTitle': 'No dishes in this category',
   'dishes.noMatchDesc': 'Add a dish from the top-right button, or set a category when editing a dish.',
-  'wall.title': 'Wall',
-  'wall.sub': "Who's cooking and caring for the family",
-  'wall.emptyTitle': 'No contributions yet',
-  'wall.emptyDesc':
-    'Start meals, cook, and order — the green squares will grow.',
-  'wall.cook': 'Cooked {n}',
-  'wall.order': 'Ordered {n}',
-  'wall.streak': '{n}-day streak',
-  'wall.cookLabel': 'Cooking',
-  'wall.orderLabel': 'Ordering',
-  'wall.less': 'Less',
-  'wall.more': 'More',
+  // theme
+  'theme.title': 'Appearance',
+  'theme.light': 'Light',
+  'theme.dark': 'Dark',
+  'theme.system': 'System',
   'me.title': 'Me',
   'me.admin': 'Admin',
   'me.changePassword': 'Change password',
