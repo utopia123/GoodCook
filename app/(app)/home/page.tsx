@@ -93,7 +93,7 @@ export default async function HomePage() {
           </CreateMealDialog>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-3 lg:grid-cols-2">
           {upcomingMeals.map((m) => (
             <MealCard
               key={m.id}

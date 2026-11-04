@@ -70,31 +70,35 @@ export default async function MealsPage() {
           }
         />
       ) : (
-        <div className="space-y-3">
-          {upcoming.map((m) => (
-            <MealCard
-              key={m.id}
-              meal={m}
-              tz={tz}
-              cookName={m.cookId ? members.get(m.cookId) : null}
-              participants={participants.get(m.id)?.size ?? 0}
-            />
-          ))}
+        <div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {upcoming.map((m) => (
+              <MealCard
+                key={m.id}
+                meal={m}
+                tz={tz}
+                cookName={m.cookId ? members.get(m.cookId) : null}
+                participants={participants.get(m.id)?.size ?? 0}
+              />
+            ))}
+          </div>
 
           {history.length > 0 && (
             <>
-              <p className="mb-1 mt-6 text-sm font-medium text-secondary">
+              <p className="mb-3 mt-8 text-sm font-medium text-secondary">
                 {t('meals.history')}
               </p>
-              {history.map((m) => (
-                <MealCard
-                  key={m.id}
-                  meal={m}
-                  tz={tz}
-                  cookName={m.cookId ? members.get(m.cookId) : null}
-                  participants={participants.get(m.id)?.size ?? 0}
-                />
-              ))}
+              <div className="grid gap-3 lg:grid-cols-2">
+                {history.map((m) => (
+                  <MealCard
+                    key={m.id}
+                    meal={m}
+                    tz={tz}
+                    cookName={m.cookId ? members.get(m.cookId) : null}
+                    participants={participants.get(m.id)?.size ?? 0}
+                  />
+                ))}
+              </div>
             </>
           )}
         </div>
