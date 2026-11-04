@@ -156,19 +156,22 @@ export async function deleteDish(id: string): Promise<ActionResult> {
 // ── 批量归类：把选中的菜品移入某个分类 ──
 
 export async function assignDishesToCategory(
-  categoryId: string,
+  categoryId: string | null,
   dishIds: string[],
 ): Promise<ActionResult & { moved?: number }> {
   const t = await getT()
   const me = await getCurrentUser()
   if (!me) return { ok: false, error: t('err.loginRequired') }
 
-  const cat = db
-    .select()
-    .from(dishCategories)
-    .where(eq(dishCategories.id, categoryId))
-    .get()
-  if (!cat) return { ok: false, error: t('err.categoryNotFound') }
+  // null = 移出分类（归为未分类）
+  if (categoryId) {
+    const cat = db
+      .select()
+      .from(dishCategories)
+      .where(eq(dishCategories.id, categoryId))
+      .get()
+    if (!cat) return { ok: false, error: t('err.categoryNotFound') }
+  }
 
   const ids = [...new Set(dishIds.filter(Boolean))].slice(0, 500)
   if (ids.length === 0) return { ok: true, moved: 0 }

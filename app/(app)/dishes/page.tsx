@@ -17,7 +17,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { DishCard } from '@/components/dishes/dish-card'
 import { DishForm } from '@/components/dishes/dish-form'
 import { CategoryBar } from '@/components/dishes/category-bar'
-import { CategoryAssign } from '@/components/dishes/category-assign'
+import { DishesBatch } from '@/components/dishes/dishes-batch'
 import { DishInsights, type InsightCard } from '@/components/dishes/dish-insights'
 import { DishIo } from '@/components/dishes/dish-io'
 
@@ -173,21 +173,21 @@ export default async function DishesPage({
         action={
           <div className="flex items-center gap-2">
             <DishIo />
-            {currentCategory && (
-              <CategoryAssign
-                category={currentCategory}
+            {categories.length > 0 && (
+              <DishesBatch
                 dishes={active.map((d) => ({
                   id: d.id,
                   name: d.name,
                   categoryId: d.categoryId,
                 }))}
-                categoryNames={Object.fromEntries(categoryName)}
+                categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+                defaultCategoryId={currentCategory?.id ?? null}
               >
                 <Button variant="trough" size="sm">
                   <FolderPlus className="h-4 w-4" />
-                  {t('dishes.assign')}
+                  {t('batch.open')}
                 </Button>
-              </CategoryAssign>
+              </DishesBatch>
             )}
             <DishForm mode="create" categories={categories}>
               <Button size="sm">

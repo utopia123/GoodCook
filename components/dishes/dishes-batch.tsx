@@ -22,37 +22,38 @@ export type PickDish = {
 }
 
 /**
- * 「选择菜品加入此分类」：勾选菜品批量移入当前分类。
- * 已在当前分类的显示为已加入（不可反选）。
+ * 批量归类：勾选多道菜，选择目标分类（含「未分类」以移出）。
+ * 默认目标为当前所在分类（若有）。
  */
-export function CategoryAssign({
-  category,
+export function DishesBatch({
   dishes,
-  categoryNames,
+  categories,
+  defaultCategoryId,
   children,
 }: {
-  category: { id: string; name: string }
   dishes: PickDish[]
-  /** 分类 id → 名称（服务端传入的普通对象，不能传函数） */
-  categoryNames: Record<string, string>
+  categories: { id: string; name: string }[]
+  defaultCategoryId?: string | null
   children: React.ReactNode
 }) {
   const router = useRouter()
   const t = useT()
   const [open, setOpen] = useState(false)
+  const [target, setTarget] = useState<string>(defaultCategoryId ?? '')
   const [q, setQ] = useState('')
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const [error, setError] = useState('')
   const [pending, startTransition] = useTransition()
 
-  const candidates = useMemo(
-    () => dishes.filter((d) => d.categoryId !== category.id),
-    [dishes, category.id],
+  const catName = useMemo(
+    () => new Map(categories.map((c) => [c.id, c.name])),
+    [categories],
   )
+
   const list = useMemo(() => {
     const k = q.trim().toLowerCase()
-    return k ? candidates.filter((d) => d.name.toLowerCase().includes(k)) : candidates
-  }, [candidates, q])
+    return k ? dishes.filter((d) => d.name.toLowerCase().includes(k)) : dishes
+  }, [dishes, q])
 
   const toggle = (id: string) =>
     setPicked((cur) => {
@@ -62,10 +63,17 @@ export function CategoryAssign({
       return next
     })
 
+  const reset = () => {
+    setPicked(new Set())
+    setQ('')
+    setError('')
+    setTarget(defaultCategoryId ?? '')
+  }
+
   const submit = () =>
     startTransition(async () => {
       setError('')
-      const res = await assignDishesToCategory(category.id, [...picked])
+      const res = await assignDishesToCategory(target || null, [...picked])
       if (!res.ok) {
         setError(res.error)
         return
@@ -80,37 +88,69 @@ export function CategoryAssign({
       open={open}
       onOpenChange={(v) => {
         setOpen(v)
-        if (!v) {
-          setPicked(new Set())
-          setQ('')
-          setError('')
-        }
+        if (!v) reset()
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent title={t('dishes.assignTitle', { name: category.name })}>
+      <DialogContent title={t('batch.title')}>
         <div className="space-y-3">
+          {/* 目标分类 */}
+          <div>
+            <p className="mb-1.5 text-xs font-medium text-secondary">
+              {t('batch.target')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setTarget(c.id)}
+                  className={cn(
+                    'rounded-full px-3 py-1.5 text-xs transition-colors',
+                    target === c.id
+                      ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                      : 'mf-inset text-secondary hover:text-ink',
+                  )}
+                >
+                  {c.name}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setTarget('')}
+                className={cn(
+                  'rounded-full px-3 py-1.5 text-xs transition-colors',
+                  target === ''
+                    ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                    : 'mf-inset text-secondary hover:text-ink',
+                )}
+              >
+                {t('dishes.uncategorized')}
+              </button>
+            </div>
+          </div>
+
+          {/* 搜索 */}
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
             <Input
               className="pl-9"
-              placeholder={t('dishes.assignSearch')}
+              placeholder={t('batch.search')}
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
           </div>
 
+          {/* 菜品多选 */}
           {list.length === 0 ? (
             <p className="py-6 text-center text-sm text-secondary">
-              {t('dishes.assignEmpty')}
+              {t('batch.empty')}
             </p>
           ) : (
-            <ul className="max-h-[55vh] space-y-1.5 overflow-y-auto pr-0.5">
+            <ul className="max-h-[52vh] space-y-1.5 overflow-y-auto pr-0.5">
               {list.map((d) => {
                 const on = picked.has(d.id)
-                const current = d.categoryId
-                  ? (categoryNames[d.categoryId] ?? null)
-                  : null
+                const current = d.categoryId ? catName.get(d.categoryId) : null
                 return (
                   <li key={d.id}>
                     <button
@@ -158,8 +198,11 @@ export function CategoryAssign({
             onClick={submit}
           >
             {picked.size > 0
-              ? t('dishes.assignConfirm', { n: picked.size })
-              : t('dishes.assignConfirmEmpty')}
+              ? t('batch.confirm', {
+                  n: picked.size,
+                  name: target ? (catName.get(target) ?? '') : t('dishes.uncategorized'),
+                })
+              : t('batch.confirmEmpty')}
           </Button>
           <DialogClose className="sr-only">{t('common.cancel')}</DialogClose>
         </div>
