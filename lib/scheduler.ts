@@ -4,6 +4,7 @@ import { db } from '@/lib/db/client'
 import { meals, mealSchedules } from '@/lib/db/schema'
 import { getSettings } from '@/lib/settings'
 import { dayjs, localDateTimeToSec, nowSec } from '@/lib/time'
+import { maybeRunDailyBackup } from '@/lib/backup'
 
 // 用餐时间过后多久自动标记「已完成」
 const DONE_AFTER_SEC = 4 * 3600
@@ -108,6 +109,8 @@ export async function startScheduler() {
     } catch (e) {
       console.error('[scheduler] tick failed', e)
     }
+    // 每天最多生成一份数据备份（保留最近 5 份）
+    void maybeRunDailyBackup().catch((e) => console.error('[backup]', e))
   })
   // 启动时先跑一次，补齐停机期间错过的饭局
   try {
@@ -115,5 +118,7 @@ export async function startScheduler() {
   } catch (e) {
     console.error('[scheduler] initial tick failed', e)
   }
+  // 启动时也检查一次（容器可能停机跨天）
+  void maybeRunDailyBackup().catch((e) => console.error('[backup]', e))
   console.log('[scheduler] 已启动（每 5 分钟检查一次）')
 }

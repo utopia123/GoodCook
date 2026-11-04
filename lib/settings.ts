@@ -45,3 +45,21 @@ export function getSettings(): FamilySettings {
     timezone: map.get('timezone') || DEFAULTS.timezone,
   }
 }
+
+
+// ── 备份配置（我的页可改） ──
+export type BackupConfig = { time: string; keep: number }
+
+export function getBackupConfig(): BackupConfig {
+  const time = getSetting('backupTime') ?? '03:00'
+  const rawKeep = Number(getSetting('backupKeep') ?? '5')
+  const keep = Number.isFinite(rawKeep)
+    ? Math.min(30, Math.max(1, Math.round(rawKeep)))
+    : 5
+  return { time: /^\d{2}:\d{2}$/.test(time) ? time : '03:00', keep }
+}
+
+export function setBackupConfig(time: string, keep: number) {
+  setSetting('backupTime', time)
+  setSetting('backupKeep', String(keep))
+}
