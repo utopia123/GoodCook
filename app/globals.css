@@ -7,53 +7,45 @@
      不再依赖 prefers-color-scheme 媒体查询
    ────────────────────────────────────────────────────────── */
 :root {
-  /* 三层布料 */
+  --radius: 24px;
+  --mf-highlight: 255 255 255;
+  --mf-glass-blur: 18px;
+}
+
+/* ───────── 配色方案 ─────────
+   主题通过 <html data-theme="..."> 切换，明暗通过 .dark 叠加。
+   五套方案：green（默认）/ celadon / caramel / slate / wine
+   ─────────────────────────── */
+
+/* 青菜绿（默认） */
+:root,
+html[data-theme='green'] {
   --mf-base: #f2f5f1;
   --mf-surface: #ffffff;
   --mf-trough: #e7eae6;
-
   --mf-shadow: 56 71 60;
-
-  /* 青菜绿强调 */
   --mf-accent: #4ea96b;
   --mf-accent-strong: #3c9157;
   --mf-accent-deep: #2f7a48;
   --mf-accent-soft: 78 169 107;
   --mf-tint: #e7f2ea;
-
-  /* 文字 */
   --mf-ink: #1f2a22;
   --mf-secondary: #5d6b60;
-
-  /* 状态色 */
   --mf-danger: #d9534f;
   --mf-warn: #e0a13a;
-
-  --mf-highlight: 255 255 255;
-
-  /* 磨砂玻璃令牌 */
-  --mf-glass: rgba(255, 255, 255, 0.55); /* 常规玻璃面 */
-  --mf-glass-strong: rgba(255, 255, 255, 0.7); /* 强玻璃面（选中/弹层） */
+  --mf-glass: rgba(255, 255, 255, 0.55);
+  --mf-glass-strong: rgba(255, 255, 255, 0.7);
   --mf-glass-border: rgba(56, 71, 60, 0.14);
-  --mf-glass-blur: 18px;
-
-  /* 页面底：两层柔和绿色光斑 + 底色 */
   --mf-page: radial-gradient(
-      1100px 720px at 88% -12%,
-      rgb(var(--mf-accent-soft) / 0.18),
-      transparent 62%
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.18), transparent 62%
     ),
     radial-gradient(
-      900px 640px at -8% 104%,
-      rgb(var(--mf-accent-soft) / 0.12),
-      transparent 58%
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.12), transparent 58%
     ),
     var(--mf-base);
-
-  --radius: 24px;
 }
-
-.dark {
+html.dark,
+html[data-theme='green'].dark {
   --mf-base: #121518;
   --mf-surface: #232730;
   --mf-trough: #191d22;
@@ -65,21 +57,214 @@
   --mf-tint: #1d2a21;
   --mf-ink: #eef2ec;
   --mf-secondary: #9aa89d;
-  --mf-highlight: 255 255 255;
-
   --mf-glass: rgba(26, 30, 37, 0.55);
   --mf-glass-strong: rgba(30, 34, 42, 0.72);
   --mf-glass-border: rgba(255, 255, 255, 0.09);
-
   --mf-page: radial-gradient(
-      1100px 720px at 88% -12%,
-      rgb(var(--mf-accent-soft) / 0.1),
-      transparent 62%
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.1), transparent 62%
     ),
     radial-gradient(
-      900px 640px at -8% 104%,
-      rgb(var(--mf-accent-soft) / 0.07),
-      transparent 58%
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.07), transparent 58%
+    ),
+    var(--mf-base);
+}
+
+/* 青瓷 */
+html[data-theme='celadon'] {
+  --mf-base: #edf2ef;
+  --mf-surface: #ffffff;
+  --mf-trough: #e2e8e4;
+  --mf-shadow: 45 70 62;
+  --mf-accent: #3f7f6f;
+  --mf-accent-strong: #38735f;
+  --mf-accent-deep: #2f6353;
+  --mf-accent-soft: 79 147 128;
+  --mf-tint: #e4efe9;
+  --mf-ink: #1d2a26;
+  --mf-secondary: #586a63;
+  --mf-danger: #c96a63;
+  --mf-warn: #d99a45;
+  --mf-glass: rgba(255, 255, 255, 0.55);
+  --mf-glass-strong: rgba(255, 255, 255, 0.7);
+  --mf-glass-border: rgba(45, 70, 62, 0.14);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.18), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.12), transparent 58%
+    ),
+    var(--mf-base);
+}
+html[data-theme='celadon'].dark {
+  --mf-base: #101615;
+  --mf-surface: #1e2825;
+  --mf-trough: #171f1d;
+  --mf-shadow: 0 0 0;
+  --mf-accent: #74bfa9;
+  --mf-accent-strong: #4f9380;
+  --mf-accent-deep: #3f7a6a;
+  --mf-accent-soft: 116 191 169;
+  --mf-tint: #17241f;
+  --mf-ink: #e9f0ec;
+  --mf-secondary: #93a59d;
+  --mf-glass: rgba(24, 34, 31, 0.55);
+  --mf-glass-strong: rgba(27, 38, 35, 0.72);
+  --mf-glass-border: rgba(255, 255, 255, 0.09);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.1), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.07), transparent 58%
+    ),
+    var(--mf-base);
+}
+
+/* 焦糖 */
+html[data-theme='caramel'] {
+  --mf-base: #f8f3ec;
+  --mf-surface: #ffffff;
+  --mf-trough: #eee6da;
+  --mf-shadow: 75 58 40;
+  --mf-accent: #c8792f;
+  --mf-accent-strong: #b3691f;
+  --mf-accent-deep: #92561a;
+  --mf-accent-soft: 221 148 80;
+  --mf-tint: #f7ebdd;
+  --mf-ink: #2b2119;
+  --mf-secondary: #6b5a4a;
+  --mf-danger: #c4584f;
+  --mf-warn: #d9a13a;
+  --mf-glass: rgba(255, 255, 255, 0.55);
+  --mf-glass-strong: rgba(255, 255, 255, 0.7);
+  --mf-glass-border: rgba(75, 58, 40, 0.14);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.2), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.12), transparent 58%
+    ),
+    var(--mf-base);
+}
+html[data-theme='caramel'].dark {
+  --mf-base: #171210;
+  --mf-surface: #2a221c;
+  --mf-trough: #201a16;
+  --mf-shadow: 0 0 0;
+  --mf-accent: #e0a061;
+  --mf-accent-strong: #c8792f;
+  --mf-accent-deep: #a86224;
+  --mf-accent-soft: 224 160 97;
+  --mf-tint: #241b15;
+  --mf-ink: #f0e9e2;
+  --mf-secondary: #a89a8b;
+  --mf-glass: rgba(34, 27, 23, 0.55);
+  --mf-glass-strong: rgba(38, 30, 26, 0.72);
+  --mf-glass-border: rgba(255, 255, 255, 0.09);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.12), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.08), transparent 58%
+    ),
+    var(--mf-base);
+}
+
+/* 雾岩 */
+html[data-theme='slate'] {
+  --mf-base: #f1f4f7;
+  --mf-surface: #ffffff;
+  --mf-trough: #e4e9ee;
+  --mf-shadow: 40 55 70;
+  --mf-accent: #5a6e80;
+  --mf-accent-strong: #4a6275;
+  --mf-accent-deep: #3c5263;
+  --mf-accent-soft: 107 132 150;
+  --mf-tint: #e6edf2;
+  --mf-ink: #1c2229;
+  --mf-secondary: #5c6773;
+  --mf-danger: #c4635f;
+  --mf-warn: #d99a45;
+  --mf-glass: rgba(255, 255, 255, 0.55);
+  --mf-glass-strong: rgba(255, 255, 255, 0.7);
+  --mf-glass-border: rgba(40, 55, 70, 0.14);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.16), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.1), transparent 58%
+    ),
+    var(--mf-base);
+}
+html[data-theme='slate'].dark {
+  --mf-base: #101418;
+  --mf-surface: #1f262d;
+  --mf-trough: #171d23;
+  --mf-shadow: 0 0 0;
+  --mf-accent: #8ba3b8;
+  --mf-accent-strong: #6b8496;
+  --mf-accent-deep: #567082;
+  --mf-accent-soft: 139 163 184;
+  --mf-tint: #18212a;
+  --mf-ink: #e8eef3;
+  --mf-secondary: #94a1ad;
+  --mf-glass: rgba(24, 30, 36, 0.55);
+  --mf-glass-strong: rgba(27, 34, 41, 0.72);
+  --mf-glass-border: rgba(255, 255, 255, 0.09);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.1), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.07), transparent 58%
+    ),
+    var(--mf-base);
+}
+
+/* 枣红 */
+html[data-theme='wine'] {
+  --mf-base: #f7f1ee;
+  --mf-surface: #ffffff;
+  --mf-trough: #eee4e1;
+  --mf-shadow: 70 45 46;
+  --mf-accent: #a3494a;
+  --mf-accent-strong: #953a3e;
+  --mf-accent-deep: #7d2f33;
+  --mf-accent-soft: 176 90 92;
+  --mf-tint: #f4e5e4;
+  --mf-ink: #2b1f20;
+  --mf-secondary: #6a5758;
+  --mf-danger: #b3453f;
+  --mf-warn: #d99a45;
+  --mf-glass: rgba(255, 255, 255, 0.55);
+  --mf-glass-strong: rgba(255, 255, 255, 0.7);
+  --mf-glass-border: rgba(70, 45, 46, 0.14);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.18), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.11), transparent 58%
+    ),
+    var(--mf-base);
+}
+html[data-theme='wine'].dark {
+  --mf-base: #161112;
+  --mf-surface: #2a2021;
+  --mf-trough: #1f1819;
+  --mf-shadow: 0 0 0;
+  --mf-accent: #cf7a7d;
+  --mf-accent-strong: #b05a5c;
+  --mf-accent-deep: #954a4c;
+  --mf-accent-soft: 207 122 125;
+  --mf-tint: #241a1b;
+  --mf-ink: #f0e7e5;
+  --mf-secondary: #a89495;
+  --mf-glass: rgba(34, 26, 27, 0.55);
+  --mf-glass-strong: rgba(38, 29, 30, 0.72);
+  --mf-glass-border: rgba(255, 255, 255, 0.09);
+  --mf-page: radial-gradient(
+      1100px 720px at 88% -12%, rgb(var(--mf-accent-soft) / 0.11), transparent 62%
+    ),
+    radial-gradient(
+      900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.07), transparent 58%
     ),
     var(--mf-base);
 }

@@ -14,6 +14,14 @@ export async function register() {
     console.error('[migrate] 失败', e)
   }
 
+  // 补齐常用佐料种子（幂等）
+  try {
+    const { ensureSeedCondiments } = await import('@/lib/seed')
+    ensureSeedCondiments()
+  } catch (e) {
+    console.error('[seed] 佐料种子失败', e)
+  }
+
   const { startScheduler } = await import('@/lib/scheduler')
   await startScheduler()
 }
