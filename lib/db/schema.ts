@@ -1,5 +1,5 @@
 /**
- * 干饭厨子 数据库结构（Drizzle ORM / SQLite）
+ * 好厨子（Goodcook，基于 GanCook 改造）数据库结构（Drizzle ORM / SQLite）
  *
  * 设计要点（相对原 mycook 的改造）：
  * - 去掉 users.role：一账号多角色，做饭人按「每一餐」在 meals.cookId 上认领

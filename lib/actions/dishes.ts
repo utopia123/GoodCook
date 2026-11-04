@@ -156,7 +156,8 @@ export async function deleteDish(id: string): Promise<ActionResult> {
 // ── 导入（菜品页上传 JSON） ──
 
 const importSchema = z.object({
-  app: z.literal('gancook'),
+  // 兼容两个品牌标识：gancook（原版导出）与 goodcook（本版导出）
+  app: z.enum(['gancook', 'goodcook']),
   type: z.literal('dishes'),
   categories: z.array(z.string().trim().min(1).max(20)).max(100).default([]),
   dishes: z

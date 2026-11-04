@@ -20,7 +20,7 @@ export async function GET() {
 
   const nameOf = new Map(cats.map((c) => [c.id, c.name]))
   const payload = {
-    app: 'gancook',
+    app: 'goodcook',
     type: 'dishes',
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -37,7 +37,7 @@ export async function GET() {
   return new NextResponse(JSON.stringify(payload, null, 2), {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Content-Disposition': `attachment; filename="gancook-dishes-${date}.json"`,
+      'Content-Disposition': `attachment; filename="goodcook-dishes-${date}.json"`,
       'Cache-Control': 'no-store',
     },
   })

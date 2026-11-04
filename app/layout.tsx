@@ -4,7 +4,7 @@ import { I18nProvider } from '@/components/i18n-provider'
 import { getLocale, getMessages } from '@/lib/i18n/server'
 
 export const metadata: Metadata = {
-  title: '干饭厨子 · GanCook',
+  title: '好厨子 · Goodcook',
   description: '可自部署到 NAS 的家庭点菜系统 · 让每一顿饭都充满期待',
   icons: {
     icon: [
