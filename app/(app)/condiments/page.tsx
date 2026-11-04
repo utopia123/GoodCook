@@ -66,7 +66,7 @@ export default async function CondimentsPage() {
                     <CondimentForm key={c.id} mode="edit" item={c}>
                       <button
                         type="button"
-                        className="mf-raised mf-pressable w-full p-3.5 text-left"
+                        className="mf-raised mf-solid mf-pressable w-full p-3.5 text-left"
                       >
                         <span className="block truncate text-[15px] font-semibold tracking-[-0.01em] text-ink">
                           {c.name}

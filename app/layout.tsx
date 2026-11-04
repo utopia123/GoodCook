@@ -29,7 +29,7 @@ export const viewport: Viewport = {
 }
 
 /** 首帧前同步应用主题，避免暗色用户看到白色闪烁 */
-const themeInitScript = `(function(){try{var t=localStorage.getItem('goodcook-theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);var p=localStorage.getItem('goodcook-palette');if(p)document.documentElement.dataset.theme=p}catch(e){}})()`
+const themeInitScript = `(function(){try{var t=localStorage.getItem('goodcook-theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);var p=localStorage.getItem('goodcook-palette');if(p)document.documentElement.dataset.theme=p;var z=localStorage.getItem('goodcook-scale');if(z)document.documentElement.style.zoom={sm:'0.92',md:'',lg:'1.08'}[z]||''}catch(e){}})()`
 
 export default async function RootLayout({
   children,

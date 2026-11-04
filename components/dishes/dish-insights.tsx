@@ -29,7 +29,7 @@ export function DishInsights({ cards }: { cards: InsightCard[] }) {
       {cards.map((card) => {
         const Icon = ICONS[card.kind]
         return (
-          <div key={card.kind} className="mf-raised p-3.5">
+          <div key={card.kind} className="mf-raised mf-solid p-3.5">
             <p
               className={cn(
                 'flex items-center gap-1.5 text-xs font-semibold',

@@ -8,12 +8,14 @@ import {
   LogOut,
   Palette,
   Paintbrush,
+  Type,
 } from 'lucide-react'
 import { List, Row } from '@/components/ui/list'
 import { IconChip } from '@/components/ui/icon-chip'
 import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { PalettePicker } from '@/components/me/palette-picker'
+import { UiScalePicker } from '@/components/me/ui-scale'
 import { ChangePassword } from '@/components/me/change-password'
 import { useT } from '@/components/i18n-provider'
 import { logout } from '@/lib/actions/auth'
@@ -54,6 +56,16 @@ export function SettingsList({ isAdmin }: { isAdmin: boolean }) {
           }
           title={t('theme.title')}
           trailing={<ThemeToggle />}
+          chevron={false}
+        />
+        <Row
+          leading={
+            <IconChip>
+              <Type />
+            </IconChip>
+          }
+          title={t('scale.title')}
+          trailing={<UiScalePicker />}
           chevron={false}
         />
         <Row

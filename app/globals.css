@@ -334,6 +334,13 @@ body {
 }
 
 /* ── 卡片（磨砂浮起面）── */
+.mf-raised.mf-solid {
+  /* 实底卡片：同一屏内所有卡片底色完全一致，不受页面渐变影响 */
+  background: var(--mf-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 .mf-raised {
   border: 1px solid var(--mf-glass-border);
   border-radius: var(--radius);

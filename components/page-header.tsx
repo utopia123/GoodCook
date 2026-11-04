@@ -11,14 +11,20 @@ export function PageHeader({
   action?: React.ReactNode
 }) {
   return (
-    <header className="mb-5 flex items-end justify-between gap-3">
-      <div>
-        <h1 className="tracking-title text-2xl font-bold text-ink">{title}</h1>
+    <header className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <h1 className="whitespace-nowrap tracking-title text-2xl font-bold text-ink">
+          {title}
+        </h1>
         {subtitle && (
           <p className="mt-0.5 text-sm text-secondary">{subtitle}</p>
         )}
       </div>
-      {action && <div className="shrink-0 pb-1">{action}</div>}
+      {action && (
+        <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end sm:pb-1">
+          {action}
+        </div>
+      )}
     </header>
   )
 }
