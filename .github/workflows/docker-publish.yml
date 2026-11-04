@@ -17,9 +17,10 @@ concurrency:
 
 jobs:
   build-push:
-    runs-on: ubuntu-latest
+    # 固定 24.04：ubuntu-latest 将在 2026-10 迁到 26.04，避免构建环境漂移
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # 版本号唯一来源：package.json（发布新版本 = 改这里再推）
       - id: ver
