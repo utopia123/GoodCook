@@ -7,7 +7,7 @@ import { Home, UtensilsCrossed, ChefHat, Sprout, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/components/i18n-provider'
 
-const TABS = [
+export const NAV_TABS = [
   { href: '/home', key: 'nav.home', icon: Home },
   { href: '/meals', key: 'nav.meals', icon: UtensilsCrossed },
   { href: '/dishes', key: 'nav.dishes', icon: ChefHat },
@@ -15,14 +15,14 @@ const TABS = [
   { href: '/me', key: 'nav.me', icon: User },
 ] as const
 
-/** 浮动底部 Tab Bar：trough 凹槽 + 选中项白色浮起 bump（layoutId 滑动） */
+/** 浮动底部 Tab Bar：trough 凹槽 + 选中项白色浮起 bump（layoutId 滑动）。仅手机/平板（lg 以下）显示 */
 export function BottomNav() {
   const pathname = usePathname()
   const t = useT()
   return (
-    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[calc(env(safe-area-inset-bottom)+12px)]">
+    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[calc(env(safe-area-inset-bottom)+12px)] lg:hidden">
       <div className="mf-trough pointer-events-auto flex items-center gap-1 p-1.5 shadow-[0_4px_18px_rgba(56,71,60,0.16)]">
-        {TABS.map((tab) => {
+        {NAV_TABS.map((tab) => {
           const active =
             pathname === tab.href || pathname.startsWith(tab.href + '/')
           const Icon = tab.icon
