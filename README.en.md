@@ -4,7 +4,7 @@
 
 # 🍳 GoodCook
 
-**A self-hostable family meal-ordering app for your NAS — take turns cooking, order dishes, rate each meal.**
+**A self-hostable personal cooking system for your NAS.**
 **A heavily modified fork of [Gloridust/GanCook](https://github.com/Gloridust/GanCook) (MIT).**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
