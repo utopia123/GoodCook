@@ -23,7 +23,6 @@
 - [Common operations](#-common-operations)
 - [Backup & restore](#-backup--restore)
 - [Migrate from upstream GanCook](#-migrate-from-upstream-gancook)
-- [Development](#️-development)
 - [Tech stack](#-tech-stack)
 - [License](#-license)
 
@@ -152,15 +151,6 @@ cd .. && docker compose up -d                          # migrations run automati
 ## 🧭 Migrate from upstream GanCook
 
 Point this fork at the same `data` directory — the schema migrates incrementally and everything (accounts, meals, images) is preserved.
-
-## 🛠️ Development
-
-```bash
-npm install
-cp .env.example .env.local
-npm run db:migrate
-npm run dev   # http://localhost:3000
-```
 
 ## 🧱 Tech stack
 

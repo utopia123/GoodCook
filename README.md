@@ -26,7 +26,6 @@
 - [常用运维](#-常用运维)
 - [数据备份与还原](#-数据备份与还原)
 - [从原版 GanCook 迁移](#-从原版-gancook-迁移)
-- [本地开发](#️-本地开发)
 - [技术栈](#-技术栈)
 - [License](#-license)
 
@@ -157,15 +156,6 @@ cd .. && docker compose up -d          # 启动，自动执行迁移
 ## 🧭 从原版 GanCook 迁移
 
 把原版挂载的 `data` 目录整体复制给本版本使用即可——数据库结构纯增量迁移，账号、饭局、图片全部保留。
-
-## 🛠️ 本地开发
-
-```bash
-npm install
-cp .env.example .env.local
-npm run db:migrate
-npm run dev   # http://localhost:3000
-```
 
 ## 🧱 技术栈
 
