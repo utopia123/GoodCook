@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { Clock, Users, ChefHat, ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { MEAL_EMOJI, fmtTime, fmtDateLabel } from '@/lib/time'
+import { fmtTime, fmtDateLabel } from '@/lib/time'
+import { MealTypeIcon } from '@/components/meals/meal-type-icon'
 import { getT } from '@/lib/i18n/server'
 import { cn } from '@/lib/utils'
 import type { Meal } from '@/lib/db/schema'
@@ -45,11 +46,11 @@ export async function MealCard({
     >
       <div
         className={cn(
-          'flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[18px] text-[26px]',
+          'flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[18px]',
           status.tile,
         )}
       >
-        {MEAL_EMOJI[meal.mealType]}
+        <MealTypeIcon type={meal.mealType} className="h-6 w-6" />
       </div>
 
       <div className="relative min-w-0 flex-1">

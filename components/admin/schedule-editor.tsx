@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Segmented } from '@/components/ui/segmented'
 import { cn } from '@/lib/utils'
-import { MEAL_EMOJI } from '@/lib/time'
+import { MealTypeIcon } from '@/components/meals/meal-type-icon'
 import { useT } from '@/components/i18n-provider'
 import {
   updateSchedule,
@@ -75,7 +75,9 @@ function ScheduleRow({ s }: { s: MealSchedule }) {
   return (
     <div className="mf-raised space-y-3 p-4">
       <div className="relative flex items-center gap-2">
-        <span className="text-xl">{MEAL_EMOJI[mealType]}</span>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent">
+          <MealTypeIcon type={mealType} />
+        </span>
         <Input
           value={name}
           maxLength={20}

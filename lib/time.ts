@@ -18,12 +18,6 @@ export const MEAL_LABELS: Record<string, string> = {
   dinner: '晚餐',
 }
 
-export const MEAL_EMOJI: Record<string, string> = {
-  breakfast: '🌅',
-  lunch: '🍱',
-  dinner: '🍲',
-}
-
 /** 当前 unix 秒 */
 export function nowSec(): number {
   return Math.floor(Date.now() / 1000)

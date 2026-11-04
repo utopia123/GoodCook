@@ -7,7 +7,8 @@ import { dishes as dishesTable, dishCategories as dishCategoriesTable } from '@/
 import { requireUser } from '@/lib/auth/user'
 import { getSettings } from '@/lib/settings'
 import { getMealDetail, myOrderedDishIds } from '@/lib/meals'
-import { MEAL_EMOJI, fmtTime, fmtDateLabel, deadlineText, nowSec } from '@/lib/time'
+import { fmtTime, fmtDateLabel, deadlineText, nowSec } from '@/lib/time'
+import { MealTypeIcon } from '@/components/meals/meal-type-icon'
 import { getT } from '@/lib/i18n/server'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -88,9 +89,9 @@ export default async function MealDetailPage({
       <div className="mf-raised mb-4 p-5">
         <div className="relative flex items-center gap-3">
           <div
-            className={`flex h-14 w-14 items-center justify-center rounded-2xl text-3xl ${status.tile}`}
+            className={`flex h-14 w-14 items-center justify-center rounded-2xl ${status.tile}`}
           >
-            {MEAL_EMOJI[meal.mealType]}
+            <MealTypeIcon type={meal.mealType} className="h-7 w-7" />
           </div>
           <div>
             <h1 className="tracking-title text-xl font-bold text-ink">
