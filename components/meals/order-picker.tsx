@@ -23,8 +23,17 @@ export function OrderPicker({
   const [selected, setSelected] = useState<Set<string>>(
     new Set(initialSelected),
   )
+  const [activeTag, setActiveTag] = useState('')
   const [, startTransition] = useTransition()
   const [error, setError] = useState('')
+
+  // 全部菜品里出现过的标签（去重），作为点菜筛选依据
+  const allTags = Array.from(
+    new Set(dishes.flatMap((d) => d.tags ?? [])),
+  ).slice(0, 12)
+  const visible = activeTag
+    ? dishes.filter((d) => (d.tags ?? []).includes(activeTag))
+    : dishes
 
   const toggle = (dishId: string) => {
     const next = new Set(selected)
@@ -61,8 +70,44 @@ export function OrderPicker({
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-2.5">
-        {dishes.map((dish) => {
+      {allTags.length > 0 && (
+        <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1">
+          <button
+            type="button"
+            onClick={() => setActiveTag('')}
+            className={cn(
+              'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              !activeTag
+                ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                : 'mf-inset text-secondary hover:text-ink',
+            )}
+          >
+            {t('dishes.all')}
+          </button>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setActiveTag(activeTag === tag ? '' : tag)}
+              className={cn(
+                'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                activeTag === tag
+                  ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                  : 'mf-inset text-secondary hover:text-ink',
+              )}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
+      {visible.length === 0 ? (
+        <p className="mf-inset rounded-2xl p-4 text-center text-sm text-secondary">
+          {t('picker.noMatch')}
+        </p>
+      ) : (
+        <div className="grid grid-cols-3 gap-2.5">
+          {visible.map((dish) => {
           const on = selected.has(dish.id)
           return (
             <button
@@ -100,7 +145,8 @@ export function OrderPicker({
             </button>
           )
         })}
-      </div>
+        </div>
+      )}
       {error && <p className="mt-2 text-sm text-danger">{error}</p>}
     </div>
   )

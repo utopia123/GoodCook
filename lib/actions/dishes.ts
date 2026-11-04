@@ -153,7 +153,7 @@ export async function deleteDish(id: string): Promise<ActionResult> {
   return { ok: true }
 }
 
-// ── 导入（菜品页上传 JSON） ──
+// ── 导入（菜品页上传 JSON 或 zip 备份） ──
 
 const importSchema = z.object({
   // 兼容两个品牌标识：gancook（原版导出）与 goodcook（本版导出）
@@ -167,10 +167,19 @@ const importSchema = z.object({
         description: z.string().max(200).nullish(),
         tags: z.array(z.string().trim().min(1).max(20)).max(6).default([]),
         category: z.string().trim().min(1).max(20).nullish(),
+        // zip 备份会带图片文件，JSON 导入忽略此字段
+        imagePath: z
+          .string()
+          .trim()
+          .max(120)
+          .refine((p) => p.startsWith('dishes/'), 'invalid image path')
+          .optional(),
       }),
     )
     .max(1000),
 })
+
+type ImportPayload = z.infer<typeof importSchema>
 
 export type ImportResult = {
   ok: boolean
@@ -178,22 +187,19 @@ export type ImportResult = {
   imported?: number
   skipped?: number
   categoriesAdded?: number
+  imagesRestored?: number
 }
 
-export async function importDishes(raw: string): Promise<ImportResult> {
-  const t = await getT()
-  const me = await getCurrentUser()
-  if (!me) return { ok: false, error: t('err.loginRequired') }
-
-  let json: unknown
-  try {
-    json = JSON.parse(raw)
-  } catch {
-    return { ok: false, error: t('err.importInvalid') }
-  }
-  const parsed = importSchema.safeParse(json)
-  if (!parsed.success) return { ok: false, error: t('err.importInvalid') }
-  const data = parsed.data
+/** 导入核心：分类幂等补建 + 同名跳过 + 可选图片落盘 */
+async function runImport(
+  t: TFn,
+  meId: string,
+  data: ImportPayload,
+  getImage: (imagePath: string) => Promise<Buffer | null>,
+): Promise<ImportResult> {
+  const { mkdir, writeFile } = await import('node:fs/promises')
+  const { join } = await import('node:path')
+  const { UPLOAD_DIR } = await import('@/lib/env')
 
   // 分类按名称幂等补建
   const catId = new Map<string, string>()
@@ -222,9 +228,10 @@ export async function importDishes(raw: string): Promise<ImportResult> {
     categoriesAdded++
   }
 
-  // 菜品：同名（任何状态）跳过，其余插入（图片不随 JSON 迁移）
+  // 菜品：同名（任何状态）跳过，其余插入
   let imported = 0
   let skipped = 0
+  let imagesRestored = 0
   for (const d of data.dishes) {
     const dup = db
       .select()
@@ -235,19 +242,91 @@ export async function importDishes(raw: string): Promise<ImportResult> {
       skipped++
       continue
     }
+
+    // 图片落盘（仅 zip 备份提供文件流）
+    let imagePath: string | null = null
+    if (d.imagePath) {
+      const buf = await getImage(d.imagePath)
+      if (buf) {
+        const ext = (d.imagePath.split('.').pop() || 'webp').toLowerCase()
+        const safeExt = ['webp', 'jpg', 'jpeg', 'png'].includes(ext)
+          ? ext
+          : 'webp'
+        const filename = `${crypto.randomUUID()}.${safeExt}`
+        await mkdir(join(UPLOAD_DIR, 'dishes'), { recursive: true })
+        await writeFile(join(UPLOAD_DIR, 'dishes', filename), buf)
+        imagePath = `dishes/${filename}`
+        imagesRestored++
+      }
+    }
+
     db.insert(dishes)
       .values({
         name: d.name,
         description: d.description?.trim() || null,
         tags: d.tags ?? [],
         categoryId: d.category ? (catId.get(d.category) ?? null) : null,
-        imagePath: null,
-        createdBy: me.id,
+        imagePath,
+        createdBy: meId,
       })
       .run()
     imported++
   }
 
   revalidatePath('/dishes')
-  return { ok: true, imported, skipped, categoriesAdded }
+  return { ok: true, imported, skipped, categoriesAdded, imagesRestored }
+}
+
+function parseImportPayload(raw: string):
+  | { data: ImportPayload }
+  | { error: string } {
+  let json: unknown
+  try {
+    json = JSON.parse(raw)
+  } catch {
+    return { error: 'err.importInvalid' }
+  }
+  const parsed = importSchema.safeParse(json)
+  if (!parsed.success) return { error: 'err.importInvalid' }
+  return { data: parsed.data }
+}
+
+/** JSON 导入（不含图片） */
+export async function importDishes(raw: string): Promise<ImportResult> {
+  const t = await getT()
+  const me = await getCurrentUser()
+  if (!me) return { ok: false, error: t('err.loginRequired') }
+  const parsed = parseImportPayload(raw)
+  if ('error' in parsed) return { ok: false, error: t(parsed.error) }
+  return runImport(t, me.id, parsed.data, async () => null)
+}
+
+/** zip 备份导入（dishes.json + images/ 图片文件） */
+export async function importDishesZip(form: FormData): Promise<ImportResult> {
+  const t = await getT()
+  const me = await getCurrentUser()
+  if (!me) return { ok: false, error: t('err.loginRequired') }
+
+  const file = form.get('file')
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: t('err.importInvalid') }
+  }
+
+  const JSZip = (await import('jszip')).default
+  let zip: Awaited<ReturnType<typeof JSZip.loadAsync>>
+  try {
+    zip = await JSZip.loadAsync(await file.arrayBuffer())
+  } catch {
+    return { ok: false, error: t('err.importInvalid') }
+  }
+  const jsonFile = zip.file('dishes.json')
+  if (!jsonFile) return { ok: false, error: t('err.importInvalid') }
+
+  const parsed = parseImportPayload(await jsonFile.async('string'))
+  if ('error' in parsed) return { ok: false, error: t(parsed.error) }
+
+  return runImport(t, me.id, parsed.data, async (imagePath) => {
+    const entry = zip.file(`images/${imagePath}`)
+    return entry ? entry.async('nodebuffer') : null
+  })
 }

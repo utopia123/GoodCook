@@ -151,6 +151,8 @@ const zh: Messages = {
   'dishes.catRename': '重命名',
   'dishes.noMatchTitle': '这个分类下还没有菜品',
   'dishes.noMatchDesc': '点右上角「添加」把菜收进来，或在编辑菜品时选择分类。',
+  'dishes.importImages': '，恢复图片 {n} 张',
+  'picker.noMatch': '这个标签下没有可点的菜',
   // 外观主题
   'theme.title': '外观',
   'theme.light': '浅色',
@@ -401,6 +403,8 @@ const en: Messages = {
   'dishes.catRename': 'Rename',
   'dishes.noMatchTitle': 'No dishes in this category',
   'dishes.noMatchDesc': 'Add a dish from the top-right button, or set a category when editing a dish.',
+  'dishes.importImages': ', restored {n} images',
+  'picker.noMatch': 'No dishes match this tag',
   // theme
   'theme.title': 'Appearance',
   'theme.light': 'Light',
