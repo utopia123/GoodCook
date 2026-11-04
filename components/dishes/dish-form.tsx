@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input, Textarea } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { useT } from '@/components/i18n-provider'
 import { compressImage } from '@/lib/client/compress-image'
@@ -157,19 +158,16 @@ export function DishForm({
           </div>
           <div>
             <Label htmlFor="dish-cat">{t('dishform.category')}</Label>
-            <select
+            <Select
               id="dish-cat"
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="mf-inset h-11 w-full rounded-xl px-3 text-[15px] text-ink outline-none focus:ring-2 focus:ring-accent/50"
-            >
-              <option value="">{t('dishform.categoryNone')}</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              onChange={setCategoryId}
+              placeholder={t('dishform.categoryNone')}
+              options={[
+                { value: '', label: t('dishform.categoryNone') },
+                ...categories.map((c) => ({ value: c.id, label: c.name })),
+              ]}
+            />
           </div>
           <div>
             <Label htmlFor="dish-tags">{t('dishform.tags')}</Label>
