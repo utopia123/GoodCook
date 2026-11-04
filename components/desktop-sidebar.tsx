@@ -55,15 +55,15 @@ export function DesktopSidebar() {
 
       {/* 底部：外观切换 */}
       <div className="flex-1" />
-      <div className="border-t border-[var(--mf-glass-border)] pt-3">
-        <ThemeToggle className="w-full" />
+      <div className="flex items-center gap-1 border-t border-[var(--mf-glass-border)] pt-3">
+        <ThemeToggle className="flex-1" />
         <a
           href="https://github.com/utopia123/GoodCook"
           target="_blank"
           rel="noreferrer"
           title="utopia123/GoodCook"
           aria-label="GitHub: utopia123/GoodCook"
-          className="mt-1 flex w-fit items-center rounded-xl p-2.5 text-secondary transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/5"
+          className="flex shrink-0 items-center rounded-xl p-2.5 text-secondary transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/5"
         >
           <Github className="h-[18px] w-[18px]" />
         </a>

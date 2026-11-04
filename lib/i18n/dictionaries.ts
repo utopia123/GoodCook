@@ -186,6 +186,8 @@ const zh: Messages = {
   'condiments.avoidWithPh': '清淡海鲜（容易抢味）',
   'condiments.note': '备注（可选）',
   'condiments.notePh': '存放位置 / 余量',
+  'condiments.good': '宜',
+  'condiments.avoid': '忌',
   // 菜谱区
   'recipes.title': '菜谱',
   'recipes.count': '共 {n} 道',
@@ -515,6 +517,8 @@ const en: Messages = {
   'condiments.avoidWithPh': 'Delicate seafood (overpowers)',
   'condiments.note': 'Note (optional)',
   'condiments.notePh': 'Where it is kept / how much left',
+  'condiments.good': 'Good',
+  'condiments.avoid': 'Avoid',
   // recipes
   'recipes.title': 'Recipes',
   'recipes.count': '{n} recipes',

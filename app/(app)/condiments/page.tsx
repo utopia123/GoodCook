@@ -61,23 +61,45 @@ export default async function CondimentsPage() {
                 <p className="mf-section mb-2 text-[13px] text-ink">
                   {t(`condiments.kind.${kind}`)}
                 </p>
-                <div className="mf-list">
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
                   {items.map((c) => (
                     <CondimentForm key={c.id} mode="edit" item={c}>
                       <button
                         type="button"
-                        className="mf-row mf-row-press w-full text-left"
+                        className="mf-raised mf-pressable w-full p-3.5 text-left"
                       >
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[15px] font-medium text-ink">
-                            {c.name}
-                          </span>
-                          {c.effect && (
-                            <span className="mt-0.5 block truncate text-xs text-secondary">
-                              {c.effect}
-                            </span>
-                          )}
+                        <span className="block truncate text-[15px] font-semibold tracking-[-0.01em] text-ink">
+                          {c.name}
                         </span>
+                        {c.effect && (
+                          <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-secondary">
+                            {c.effect}
+                          </span>
+                        )}
+                        {(c.goodWith || c.avoidWith) && (
+                          <span className="mt-2 block space-y-0.5 text-[11px] leading-relaxed">
+                            {c.goodWith && (
+                              <span className="flex gap-1.5">
+                                <span className="shrink-0 font-medium text-accent">
+                                  {t('condiments.good')}
+                                </span>
+                                <span className="line-clamp-1 text-secondary">
+                                  {c.goodWith}
+                                </span>
+                              </span>
+                            )}
+                            {c.avoidWith && (
+                              <span className="flex gap-1.5">
+                                <span className="shrink-0 font-medium text-danger/80">
+                                  {t('condiments.avoid')}
+                                </span>
+                                <span className="line-clamp-1 text-secondary">
+                                  {c.avoidWith}
+                                </span>
+                              </span>
+                            )}
+                          </span>
+                        )}
                       </button>
                     </CondimentForm>
                   ))}
