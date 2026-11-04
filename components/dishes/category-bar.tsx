@@ -50,19 +50,19 @@ export function CategoryBar({
     key === 'all' ? '/dishes' : `/dishes?cat=${encodeURIComponent(key)}`
 
   return (
-    <div className="mb-4">
-      <div className="mb-2 flex items-center justify-between gap-2">
+    <div className="mb-5">
+      <div className="mb-2.5 flex items-center justify-between gap-2">
         <span className="text-[11px] font-medium tracking-wide text-secondary">
           {t('picker.groupCategory')}
         </span>
         <CategoryManager categories={categories}>
           <button
             type="button"
-            className="mf-inset flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs text-secondary hover:text-ink"
+            className="mf-inset flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-secondary hover:text-ink"
             title={t('dishes.manage')}
+            aria-label={t('dishes.manage')}
           >
             <Settings2 className="h-4 w-4" />
-            <span className="hidden min-[420px]:inline">{t('dishes.manage')}</span>
           </button>
         </CategoryManager>
       </div>

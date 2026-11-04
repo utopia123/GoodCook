@@ -25,11 +25,14 @@ const TONES = {
 export function DishInsights({ cards }: { cards: InsightCard[] }) {
   if (cards.length === 0) return null
   return (
-    <div className="mb-4 grid gap-2.5 sm:grid-cols-3">
+    <div className="-mx-4 mb-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0">
       {cards.map((card) => {
         const Icon = ICONS[card.kind]
         return (
-          <div key={card.kind} className="mf-raised mf-solid p-3.5">
+          <div
+            key={card.kind}
+            className="mf-raised mf-solid w-[62vw] max-w-[240px] shrink-0 p-3 sm:w-auto sm:max-w-none"
+          >
             <p
               className={cn(
                 'flex items-center gap-1.5 text-xs font-semibold',
