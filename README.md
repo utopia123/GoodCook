@@ -72,8 +72,25 @@ services:
       TZ: Asia/Shanghai
 ```
 
+需要应用内「关于与更新」的一键升级功能时，用下面这份（多挂载一行 Docker 套接字）：
+
+```yaml
+services:
+  goodcook:
+    image: ghcr.io/utopia123/goodcook:latest
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Asia/Shanghai
+```
+
 <details>
-<summary>📜 带完整注释的 docker-compose.yml（含 docker.sock 一键更新说明）</summary>
+<summary>📜 带完整注释的 docker-compose.yml</summary>
 
 ```yaml
 services:

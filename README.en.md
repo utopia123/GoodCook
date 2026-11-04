@@ -69,8 +69,25 @@ services:
       TZ: Asia/Shanghai
 ```
 
+To enable in-app one-click updates, use this variant (mounts the Docker socket):
+
+```yaml
+services:
+  goodcook:
+    image: ghcr.io/utopia123/goodcook:latest
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Asia/Shanghai
+```
+
 <details>
-<summary>📜 Fully commented docker-compose.yml (incl. docker.sock one-click update)</summary>
+<summary>📜 Fully commented docker-compose.yml</summary>
 
 ```yaml
 services:
