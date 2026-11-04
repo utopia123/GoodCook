@@ -82,12 +82,12 @@ export function OrderPicker({
   return (
     <div>
       {(shownCats.length > 0 || hasUncategorized) && (
-        <div className="mb-2 flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setActiveCat('')}
             className={cn(
-              'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
               !activeCat
                 ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
                 : 'mf-inset text-secondary hover:text-ink',
@@ -101,7 +101,7 @@ export function OrderPicker({
               type="button"
               onClick={() => setActiveCat(activeCat === cat.id ? '' : cat.id)}
               className={cn(
-                'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
                 activeCat === cat.id
                   ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
                   : 'mf-inset text-secondary hover:text-ink',
@@ -115,7 +115,7 @@ export function OrderPicker({
               type="button"
               onClick={() => setActiveCat(activeCat === 'none' ? '' : 'none')}
               className={cn(
-                'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
                 activeCat === 'none'
                   ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
                   : 'mf-inset text-secondary hover:text-ink',
@@ -127,12 +127,12 @@ export function OrderPicker({
         </div>
       )}
       {allTags.length > 0 && (
-        <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="mb-3 flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setActiveTag('')}
             className={cn(
-              'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
               !activeTag
                 ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
                 : 'mf-inset text-secondary hover:text-ink',
@@ -146,7 +146,7 @@ export function OrderPicker({
               type="button"
               onClick={() => setActiveTag(activeTag === tag ? '' : tag)}
               className={cn(
-                'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
                 activeTag === tag
                   ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
                   : 'mf-inset text-secondary hover:text-ink',

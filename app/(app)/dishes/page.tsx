@@ -1,8 +1,15 @@
 import { Plus, ChefHat, SearchX, FolderPlus } from 'lucide-react'
-import { asc, desc } from 'drizzle-orm'
+import { asc, desc, eq, sql } from 'drizzle-orm'
 import { db } from '@/lib/db/client'
-import { dishes as dishesTable, dishCategories } from '@/lib/db/schema'
+import {
+  dishes as dishesTable,
+  dishCategories,
+  meals as mealsTable,
+  orders,
+} from '@/lib/db/schema'
 import { requireUser } from '@/lib/auth/user'
+import { getSettings } from '@/lib/settings'
+import { dayjs, todayLocal } from '@/lib/time'
 import { getT } from '@/lib/i18n/server'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
@@ -11,6 +18,7 @@ import { DishCard } from '@/components/dishes/dish-card'
 import { DishForm } from '@/components/dishes/dish-form'
 import { CategoryBar } from '@/components/dishes/category-bar'
 import { CategoryAssign } from '@/components/dishes/category-assign'
+import { DishInsights, type InsightCard } from '@/components/dishes/dish-insights'
 import { DishIo } from '@/components/dishes/dish-io'
 
 export const dynamic = 'force-dynamic'
@@ -23,6 +31,7 @@ export default async function DishesPage({
   const { cat } = await searchParams
   const me = await requireUser()
   const t = await getT()
+  const tz = getSettings().timezone
 
   const all = db
     .select()
@@ -53,6 +62,87 @@ export default async function DishesPage({
     if (cat === 'none') return !d.categoryId
     return d.categoryId === cat
   }
+  // 点菜热度统计（菜品维度：次数 + 最近一次点的日期）
+  const orderRows = db
+    .select({
+      dishId: orders.dishId,
+      c: sql<number>`count(*)`,
+      last: sql<string | null>`max(${mealsTable.date})`,
+    })
+    .from(orders)
+    .innerJoin(mealsTable, eq(orders.mealId, mealsTable.id))
+    .groupBy(orders.dishId)
+    .all()
+  const statOf = new Map(orderRows.map((r) => [r.dishId, r]))
+  const totalOrders = orderRows.reduce((sum, r) => sum + r.c, 0)
+  const todayStr = todayLocal(tz)
+
+  const hotItems = active
+    .filter((d) => statOf.get(d.id))
+    .sort((a, b) => (statOf.get(b.id)?.c ?? 0) - (statOf.get(a.id)?.c ?? 0))
+    .slice(0, 3)
+    .map((d) => ({
+      name: d.name,
+      meta: t('dishes.insights.times', { n: statOf.get(d.id)?.c ?? 0 }),
+    }))
+
+  const staleItems = active
+    .filter((d) => {
+      const last = statOf.get(d.id)?.last
+      return !!last && dayjs(todayStr).diff(dayjs(last), 'day') >= 14
+    })
+    .sort(
+      (a, b) =>
+        dayjs(statOf.get(a.id)!.last!).valueOf() -
+        dayjs(statOf.get(b.id)!.last!).valueOf(),
+    )
+    .slice(0, 3)
+    .map((d) => ({
+      name: d.name,
+      meta: t('dishes.insights.days', {
+        n: dayjs(todayStr).diff(dayjs(statOf.get(d.id)!.last!), 'day'),
+      }),
+    }))
+
+  const neverCount = active.filter((d) => !statOf.get(d.id)).length
+
+  const insightCards: InsightCard[] =
+    totalOrders > 0
+      ? [
+          ...(hotItems.length
+            ? [
+                {
+                  kind: 'hot' as const,
+                  label: t('dishes.insights.hot'),
+                  items: hotItems,
+                },
+              ]
+            : []),
+          ...(staleItems.length
+            ? [
+                {
+                  kind: 'stale' as const,
+                  label: t('dishes.insights.stale'),
+                  items: staleItems,
+                },
+              ]
+            : []),
+          ...(neverCount > 0
+            ? [
+                {
+                  kind: 'never' as const,
+                  label: t('dishes.insights.never'),
+                  items: [
+                    {
+                      name: t('dishes.insights.dishes', { n: neverCount }),
+                    },
+                  ],
+                },
+              ]
+            : []),
+        ]
+      : []
+
   const activeView = active.filter(match)
   const archivedView = archived.filter(match)
   // 当前正在查看某个具体分类（用于「选择菜品加入」）
@@ -130,6 +220,10 @@ export default async function DishesPage({
             total={active.length}
             uncategorized={uncategorized}
           />
+
+          {(!cat || cat === 'all') && insightCards.length > 0 && (
+            <DishInsights cards={insightCards} />
+          )}
 
           {activeView.length === 0 && archivedView.length === 0 ? (
             <EmptyState

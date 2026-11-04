@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { useT } from '@/components/i18n-provider'
 import { NAV_TABS } from '@/components/bottom-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Github } from 'lucide-react'
 
 /** 桌面端左侧导航栏（lg 及以上显示）：固定整高磨砂玻璃栏 */
 export function DesktopSidebar() {
@@ -56,6 +57,15 @@ export function DesktopSidebar() {
       <div className="flex-1" />
       <div className="border-t border-[var(--mf-glass-border)] pt-3">
         <ThemeToggle className="w-full" />
+        <a
+          href="https://github.com/utopia123/GoodCook"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-1 flex items-center gap-2 rounded-2xl px-3.5 py-2.5 text-sm text-secondary transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/5"
+        >
+          <Github className="h-4 w-4" />
+          <span className="truncate">utopia123/GoodCook</span>
+        </a>
       </div>
     </aside>
   )

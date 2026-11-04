@@ -12,7 +12,7 @@ export type CategoryWithCount = DishCategory & { count: number }
 
 function tabClass(active: boolean) {
   return cn(
-    'shrink-0 rounded-full px-3.5 py-1.5 text-sm transition-colors',
+    'shrink-0 rounded-full px-3.5 py-2 text-sm transition-colors sm:px-4',
     active
       ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
       : 'mf-inset text-secondary hover:text-ink',
@@ -53,7 +53,7 @@ export function CategoryBar({
     <div className="mb-4 flex items-center gap-2">
       <nav
         aria-label={t('dishes.manage')}
-        className="-mx-4 flex flex-1 items-center gap-2 overflow-x-auto px-4 py-1 sm:mx-0 sm:px-0"
+        className="flex flex-1 flex-wrap items-center gap-2 py-1"
       >
         {tabs.map((tab) => (
           <Link

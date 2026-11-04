@@ -79,6 +79,52 @@ export const dishes = sqliteTable(
   ],
 )
 
+// ── 佐料（调料 / 香料 / 其他干货） ──
+export const condiments = sqliteTable(
+  'condiments',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text('name').notNull(),
+    // aromatic 佐料（葱姜蒜等新鲜辅料）/ spice 香料（花椒八角等干货）/ seasoning 调味料（生抽老抽料酒等）
+    kind: text('kind', { enum: ['aromatic', 'spice', 'seasoning'] })
+      .notNull()
+      .default('seasoning'),
+    note: text('note'), // 存放位置 / 余量 / 备注
+    effect: text('effect'), // 作用功效
+    goodWith: text('good_with'), // 适合配什么菜
+    avoidWith: text('avoid_with'), // 什么菜不适合放
+    createdAt: integer('created_at').notNull().default(now),
+  },
+  (t) => [index('idx_condiments_kind').on(t.kind)],
+)
+
+// ── 菜谱（可自定义；首次由迁移内置 10 道热门菜） ──
+export const recipes = sqliteTable(
+  'recipes',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    title: text('title').notNull(),
+    // 食材：每行一条
+    ingredients: text('ingredients').notNull().default(''),
+    // 步骤：每行一步
+    steps: text('steps').notNull().default(''),
+    // 预计用时（分钟，可空）
+    minutes: integer('minutes'),
+    difficulty: text('difficulty', { enum: ['easy', 'medium', 'hard'] })
+      .notNull()
+      .default('easy'),
+    createdBy: text('created_by').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: integer('created_at').notNull().default(now),
+  },
+  (t) => [index('idx_recipes_created').on(t.createdAt)],
+)
+
 // ── 饭局（一餐） ──
 export const meals = sqliteTable(
   'meals',
@@ -204,6 +250,10 @@ export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 export type DishCategory = typeof dishCategories.$inferSelect
 export type NewDishCategory = typeof dishCategories.$inferInsert
+export type Condiment = typeof condiments.$inferSelect
+export type NewCondiment = typeof condiments.$inferInsert
+export type Recipe = typeof recipes.$inferSelect
+export type NewRecipe = typeof recipes.$inferInsert
 export type Dish = typeof dishes.$inferSelect
 export type NewDish = typeof dishes.$inferInsert
 export type Meal = typeof meals.$inferSelect

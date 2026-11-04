@@ -3,7 +3,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, UtensilsCrossed, ChefHat, User } from 'lucide-react'
+import {
+  Home,
+  UtensilsCrossed,
+  ChefHat,
+  FlaskConical,
+  BookOpen,
+  User,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useT } from '@/components/i18n-provider'
 
@@ -11,6 +18,8 @@ export const NAV_TABS = [
   { href: '/home', key: 'nav.home', icon: Home },
   { href: '/meals', key: 'nav.meals', icon: UtensilsCrossed },
   { href: '/dishes', key: 'nav.dishes', icon: ChefHat },
+  { href: '/condiments', key: 'nav.condiments', icon: FlaskConical },
+  { href: '/recipes', key: 'nav.recipes', icon: BookOpen },
   { href: '/me', key: 'nav.me', icon: User },
 ] as const
 
@@ -30,7 +39,7 @@ export function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={cn(
-                'relative flex h-12 w-[58px] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium',
+                'relative flex h-12 w-[50px] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium',
                 active ? 'text-accent' : 'text-secondary',
               )}
             >

@@ -4,7 +4,7 @@
 
 # 🍳 GoodCook
 
-**A cooking system you can deploy on your NAS.**
+**Eat together, grow together.**
 **A heavily modified fork of [Gloridust/GanCook](https://github.com/Gloridust/GanCook) (MIT).**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)

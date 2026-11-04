@@ -15,6 +15,20 @@
       "when": 1793808513131,
       "tag": "0001_add_dish_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793818648273,
+      "tag": "0002_add_condiments_recipes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793818707934,
+      "tag": "0003_condiment_details",
+      "breakpoints": true
     }
   ]
 }

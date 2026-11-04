@@ -6,7 +6,7 @@ import { getLocale, getMessages } from '@/lib/i18n/server'
 
 export const metadata: Metadata = {
   title: 'GoodCook',
-  description: '部署到 NAS 的做饭系统',
+  description: '一起吃饭，一起成长',
   icons: {
     icon: [
       { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },

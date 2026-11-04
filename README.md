@@ -4,7 +4,7 @@
 
 # 🍳 GoodCook
 
-**部署到 NAS 的做饭系统。**
+**一起吃饭，一起成长。**
 **基于 [Gloridust/GanCook](https://github.com/Gloridust/GanCook)（MIT）深度改造。**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
