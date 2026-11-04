@@ -26,9 +26,30 @@
 - 🔍 **Tag filter when ordering** — filter the dish picker by dish tags
 - 🚫 Removed the contribution-wall (heatmap) module
 
-## 🚀 Quick start (build from source)
+## 🚀 Quick start
 
-> No prebuilt Docker image is published for this fork:
+### Docker Compose (recommended)
+
+Images are built automatically via GitHub Actions on every push:
+
+```bash
+curl -O https://raw.githubusercontent.com/utopia123/GoodCook/main/docker-compose.yml
+docker compose up -d
+```
+
+### docker run
+
+```bash
+docker run -d --name goodcook \
+  -p 3000:3000 \
+  -v ./data:/data \
+  --restart unless-stopped \
+  ghcr.io/utopia123/goodcook:latest
+```
+
+> ⚠️ GHCR packages are **private** by default: after the first build, go to the repo's `Packages` settings and set the package to **Public** so NAS devices can pull anonymously.
+
+### Build from source
 
 ```bash
 git clone https://github.com/utopia123/GoodCook.git

@@ -26,14 +26,35 @@
 - 🔍 **点菜标签筛选** —— 点菜时按菜品标签一键过滤
 - 🚫 移除贡献墙（热力图）模块
 
-## 🚀 快速开始（源码构建）
+## 🚀 快速开始
 
-> 本分支未发布 Docker 镜像，请从源码构建：
+### 方式一：Docker Compose（推荐）
+
+镜像由 GitHub Actions 自动构建（每次推送自动更新），无需本地构建：
+
+```bash
+curl -O https://raw.githubusercontent.com/utopia123/GoodCook/main/docker-compose.yml
+docker compose up -d
+```
+
+### 方式二：docker run
+
+```bash
+docker run -d --name goodcook \
+  -p 3000:3000 \
+  -v ./data:/data \
+  --restart unless-stopped \
+  ghcr.io/utopia123/goodcook:latest
+```
+
+> ⚠️ 首次构建镜像后，GHCR 包默认是**私有**的：到仓库的 `Packages` 页 → 进入包设置 → 改为 **Public**，NAS 才能匿名拉取。
+
+### 方式三：源码构建
 
 ```bash
 git clone https://github.com/utopia123/GoodCook.git
 cd GoodCook
-docker compose up -d --build
+docker compose up -d --build   # compose 里注释 image、启用 build 即可
 ```
 
 打开 `http://<NAS地址>:3000`，第一个注册的人即成为管理员。数据全部落在 `data` 目录（SQLite + 图片），备份/迁移只需复制该目录。
