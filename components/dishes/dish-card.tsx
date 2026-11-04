@@ -7,8 +7,12 @@ import type { Dish } from '@/lib/db/schema'
 /** 菜品卡片（展示型）。作为 DialogTrigger 子节点时需要转发 ref/props。 */
 export const DishCard = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { dish: Dish; dimmed?: boolean }
->(({ dish, dimmed, className, ...props }, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & {
+    dish: Dish
+    dimmed?: boolean
+    categoryName?: string | null
+  }
+>(({ dish, dimmed, categoryName, className, ...props }, ref) => {
   return (
     <div
       ref={ref}
@@ -25,13 +29,18 @@ export const DishCard = React.forwardRef<
             src={`/api/uploads/${dish.imagePath}`}
             alt={dish.name}
             fill
-            sizes="(max-width: 480px) 50vw, 220px"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 220px"
             className="object-cover"
           />
         ) : (
           <div className="mf-img-empty flex h-full w-full items-center justify-center">
             <Soup className="h-9 w-9 text-accent/35" strokeWidth={1.5} />
           </div>
+        )}
+        {categoryName && (
+          <span className="absolute left-2 top-2 max-w-[70%] truncate rounded-full bg-black/35 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
+            {categoryName}
+          </span>
         )}
       </div>
       <div className="relative p-3.5">

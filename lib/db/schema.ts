@@ -33,6 +33,21 @@ export const users = sqliteTable('users', {
   createdAt: integer('created_at').notNull().default(now),
 })
 
+// ── 菜品分类（家庭自定义，全家庭共用） ──
+export const dishCategories = sqliteTable(
+  'dish_categories',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text('name').notNull().unique(),
+    // 越小越靠前，默认按创建顺序
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: integer('created_at').notNull().default(now),
+  },
+  (t) => [index('idx_dish_categories_order').on(t.sortOrder)],
+)
+
 // ── 菜品库 ──
 export const dishes = sqliteTable(
   'dishes',
@@ -44,6 +59,10 @@ export const dishes = sqliteTable(
     description: text('description'),
     // 图片相对路径，如 dishes/<uuid>.webp（落盘存储，非 base64）
     imagePath: text('image_path'),
+    // 自定义分类（可空 = 未分类）；分类删除后自动归为未分类
+    categoryId: text('category_id').references(() => dishCategories.id, {
+      onDelete: 'set null',
+    }),
     // 标签：荤/素/汤/主食 等，JSON 数组存储
     tags: text('tags', { mode: 'json' }).$type<string[]>().default([]),
     status: text('status', { enum: ['active', 'archived'] })
@@ -54,7 +73,10 @@ export const dishes = sqliteTable(
     }),
     createdAt: integer('created_at').notNull().default(now),
   },
-  (t) => [index('idx_dishes_status').on(t.status)],
+  (t) => [
+    index('idx_dishes_status').on(t.status),
+    index('idx_dishes_category').on(t.categoryId),
+  ],
 )
 
 // ── 饭局（一餐） ──
@@ -180,6 +202,8 @@ export const settings = sqliteTable('settings', {
 // 类型导出
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
+export type DishCategory = typeof dishCategories.$inferSelect
+export type NewDishCategory = typeof dishCategories.$inferInsert
 export type Dish = typeof dishes.$inferSelect
 export type NewDish = typeof dishes.$inferInsert
 export type Meal = typeof meals.$inferSelect

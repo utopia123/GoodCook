@@ -20,15 +20,17 @@ import {
   deleteDish,
   setDishStatus,
 } from '@/lib/actions/dishes'
-import type { Dish } from '@/lib/db/schema'
+import type { Dish, DishCategory } from '@/lib/db/schema'
 
 export function DishForm({
   mode,
   dish,
+  categories = [],
   children,
 }: {
   mode: 'create' | 'edit'
   dish?: Dish
+  categories?: DishCategory[]
   children: React.ReactNode
 }) {
   const router = useRouter()
@@ -38,6 +40,7 @@ export function DishForm({
   const [name, setName] = useState(dish?.name ?? '')
   const [description, setDescription] = useState(dish?.description ?? '')
   const [tags, setTags] = useState((dish?.tags ?? []).join(' '))
+  const [categoryId, setCategoryId] = useState(dish?.categoryId ?? '')
   const [blob, setBlob] = useState<Blob | null>(null)
   const [preview, setPreview] = useState<string | null>(
     dish?.imagePath ? `/api/uploads/${dish.imagePath}` : null,
@@ -60,6 +63,7 @@ export function DishForm({
     form.set('name', name)
     form.set('description', description)
     form.set('tags', tags)
+    form.set('categoryId', categoryId)
     if (blob) form.set('image', blob, 'dish.jpg')
     startTransition(async () => {
       const res =
@@ -150,6 +154,22 @@ export function DishForm({
               maxLength={200}
               onChange={(e) => setDescription(e.target.value)}
             />
+          </div>
+          <div>
+            <Label htmlFor="dish-cat">{t('dishform.category')}</Label>
+            <select
+              id="dish-cat"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="mf-inset h-11 w-full rounded-xl px-3 text-[15px] text-ink outline-none focus:ring-2 focus:ring-accent/50"
+            >
+              <option value="">{t('dishform.categoryNone')}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <Label htmlFor="dish-tags">{t('dishform.tags')}</Label>
