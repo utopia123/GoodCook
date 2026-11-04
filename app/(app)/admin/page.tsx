@@ -11,7 +11,7 @@ import { ScheduleEditor } from '@/components/admin/schedule-editor'
 import { MembersManager } from '@/components/admin/members-manager'
 import { RunSchedule } from '@/components/admin/run-schedule'
 import { UpdatePanel } from '@/components/admin/update-panel'
-import { APP_VERSION, IMAGE_REPO } from '@/lib/version'
+import { APP_VERSION_DISPLAY, IMAGE_REPO } from '@/lib/version'
 import { updateCapability } from '@/lib/update'
 
 export const dynamic = 'force-dynamic'
@@ -79,7 +79,7 @@ export default async function AdminPage() {
           {t('update.title')}
         </h2>
         <UpdatePanel
-          current={APP_VERSION}
+          current={APP_VERSION_DISPLAY}
           capability={capability}
           imageRepo={IMAGE_REPO}
         />

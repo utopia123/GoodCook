@@ -6,7 +6,7 @@ import { APP_VERSION, IMAGE_REPO } from './version'
 
 const SOCK = '/var/run/docker.sock'
 
-// ── 版本检查（查 Docker Hub 标签，总是可用，失败有兜底） ──
+// ── 版本检查（查镜像仓库标签：支持 GHCR 与 Docker Hub） ──
 
 type Semver = [number, number, number]
 function parseSemver(s: string): Semver | null {
@@ -17,6 +17,40 @@ function parseSemver(s: string): Semver | null {
 }
 function cmp(a: Semver, b: Semver): number {
   return a[0] - b[0] || a[1] - b[1] || a[2] - b[2]
+}
+
+/** 列出镜像仓库的 tag 名单 */
+async function listImageTags(): Promise<string[] | null> {
+  const timeout = AbortSignal.timeout(8000)
+
+  // GHCR：先取匿名 pull token，再调 OCI tags/list
+  if (IMAGE_REPO.startsWith('ghcr.io/')) {
+    const name = IMAGE_REPO.replace(/^ghcr\.io\//, '')
+    const tokRes = await fetch(
+      `https://ghcr.io/token?service=ghcr.io&scope=repository:${name}:pull`,
+      { signal: timeout, cache: 'no-store' },
+    )
+    if (!tokRes.ok) return null
+    const { token } = (await tokRes.json()) as { token?: string }
+    if (!token) return null
+    const res = await fetch(`https://ghcr.io/v2/${name}/tags/list?n=300`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: timeout,
+      cache: 'no-store',
+    })
+    if (!res.ok) return null
+    const data = (await res.json()) as { tags?: string[] | null }
+    return data.tags ?? []
+  }
+
+  // Docker Hub
+  const res = await fetch(
+    `https://hub.docker.com/v2/repositories/${IMAGE_REPO}/tags?page_size=100&ordering=last_updated`,
+    { signal: timeout, cache: 'no-store' },
+  )
+  if (!res.ok) return null
+  const data = (await res.json()) as { results?: { name: string }[] }
+  return (data.results ?? []).map((t) => t.name)
 }
 
 export type UpdateCheck =
@@ -31,18 +65,15 @@ export type UpdateCheck =
 
 export async function checkForUpdate(): Promise<UpdateCheck> {
   try {
-    const res = await fetch(
-      `https://hub.docker.com/v2/repositories/${IMAGE_REPO}/tags?page_size=100&ordering=last_updated`,
-      { signal: AbortSignal.timeout(8000), cache: 'no-store' },
-    )
-    if (!res.ok) return { ok: false, error: 'registry' }
-    const data = (await res.json()) as { results?: { name: string }[] }
-    const semvers = (data.results ?? [])
-      .map((t) => parseSemver(t.name))
+    const tags = await listImageTags()
+    if (!tags) return { ok: false, error: 'registry' }
+
+    const semvers = tags
+      .map((t) => parseSemver(t))
       .filter((v): v is Semver => !!v)
       .sort(cmp)
     const top = semvers[semvers.length - 1] ?? null
-    const latest = top ? `v${top.join('.')}` : null
+    const latest = top ? `${top.join('.')}` : null
     const cur = parseSemver(APP_VERSION)
     const hasUpdate = !!(top && cur && cmp(top, cur) > 0)
     return { ok: true, current: APP_VERSION, latest, hasUpdate, isDev: !cur }
@@ -115,7 +146,7 @@ async function selfContainerName(): Promise<string> {
   } catch {
     // 忽略，用默认名兜底
   }
-  return 'gancook'
+  return 'goodcook'
 }
 
 export type UpdateResult =
