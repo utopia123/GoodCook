@@ -30,11 +30,12 @@
 
 - 🏷️ **Custom dish categories** — family-wide, filterable dish page, badges on cards
 - 🌗 **Light / Dark theme** — three-state switch (light / dark / system), persisted per device
+- 🎨 **Five color schemes** — Green / Celadon / Caramel / Slate / Date red, each with light and dark, switchable in Me
 - 🧊 **Frosted-glass UI** — soft gradient background + glassmorphism on all surfaces
 - 💻 **Native desktop layout** — sidebar nav + full-width content, two-column card grids
 - 📦 **Dish backup as zip** — dish JSON + all images; import accepts zip and JSON
 - 🔍 **Two-way ordering filter** — filter the dish picker by category + tag together
-- 🧂 **Pantry** — aromatics / spices / seasonings sections with effect, best pairings and what to avoid (20 common items preloaded)
+- 🧂 **Pantry** — aromatics / spices / seasonings sections with effect, best pairings and what to avoid (51 common items preloaded)
 - 📖 **Recipes** — your own recipes (ingredients + steps + time + difficulty), 10 popular dishes preloaded
 - 📊 **Dish insights** — most ordered / not had lately (≥14 days) / never ordered
 - 💾 **Daily automatic backups** — database + images + secrets, scheduled and rotated
