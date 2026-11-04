@@ -5,7 +5,7 @@
 # 🍳 GoodCook
 
 **部署到 NAS 的做饭系统。**
-**基于 [Gloridust/GanCook](https://github.com/Gloridust/GanCook)（MIT）深度改造的分支。**
+**基于 [Gloridust/GanCook](https://github.com/Gloridust/GanCook)（MIT）深度改造。**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
@@ -16,19 +16,35 @@
 
 ---
 
+## 目录
+
+- [与原版的主要差异](#-与原版gancook的主要差异)
+- [部署](#-部署)
+  - [Docker Compose（推荐）](#docker-compose推荐)
+  - [docker run](#docker-run)
+  - [源码构建](#源码构建)
+  - [首次部署前的两个一次性步骤](#️-首次部署前的两个一次性步骤)
+- [常用运维](#-常用运维)
+- [从原版 GanCook 迁移](#-从原版-gancook-迁移)
+- [本地开发](#️-本地开发)
+- [技术栈](#-技术栈)
+- [License](#-license)
+
 ## ✨ 与原版（GanCook）的主要差异
 
 - 🏷️ **菜品自定义分类** —— 全家共用一套分类（增/改名/删除），菜品页按分类过滤，卡片显示分类角标
 - 🌗 **明暗主题** —— 浅色 / 深色 / 跟随系统三态切换，防闪烁，选择存本机
-- 🧊 **磨砂玻璃 UI** —— 页面渐变底 + 全站半透明毛玻璃质感（"牛奶布艺"升级版）
-- 💻 **电脑端原生布局** —— 左侧导航栏 + 内容左对齐铺满，列表双列卡片网格；手机端保持底部悬浮导航不变
-- 📦 **菜品 zip 备份** —— 一键导出「菜品 JSON + 全部图片」，导入兼容 zip 与 JSON（同名跳过、分类幂等补建）
+- 🧊 **磨砂玻璃 UI** —— 页面渐变底 + 全站半透明毛玻璃质感
+- 💻 **电脑端原生布局** —— 左侧导航栏 + 内容左对齐铺满，列表双列卡片网格；手机端保持底部悬浮导航
+- 📦 **菜品 zip 备份** —— 一键导出「菜品 JSON + 全部图片」，导入兼容 zip 与 JSON
 - 🔍 **点菜标签筛选** —— 点菜时按菜品标签一键过滤
 - 🚫 移除贡献墙（热力图）模块
 
-## 🚀 快速开始
+## 🚀 部署
 
-### 方式一：Docker Compose（推荐）
+打开 `http://<NAS地址>:3000`，第一个注册的人即成为管理员。
+
+### Docker Compose（推荐）
 
 镜像由 GitHub Actions 自动构建（每次推送自动更新），无需本地构建：
 
@@ -37,7 +53,24 @@ curl -O https://raw.githubusercontent.com/utopia123/GoodCook/main/docker-compose
 docker compose up -d
 ```
 
-或手动把下面内容保存为 `docker-compose.yml`：
+或手动保存下面这份精简版为 `docker-compose.yml`：
+
+```yaml
+services:
+  goodcook:
+    image: ghcr.io/utopia123/goodcook:latest
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+    environment:
+      TZ: Asia/Shanghai
+```
+
+<details>
+<summary>📜 带完整注释的 docker-compose.yml（含 docker.sock 一键更新说明）</summary>
 
 ```yaml
 services:
@@ -61,23 +94,9 @@ services:
       TZ: Asia/Shanghai
 ```
 
-**纯享版**（无注释，去掉 docker.sock）：
+</details>
 
-```yaml
-services:
-  goodcook:
-    image: ghcr.io/utopia123/goodcook:latest
-    container_name: goodcook
-    restart: unless-stopped
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./data:/data
-    environment:
-      TZ: Asia/Shanghai
-```
-
-### 方式二：docker run
+### docker run
 
 ```bash
 docker run -d --name goodcook \
@@ -87,12 +106,12 @@ docker run -d --name goodcook \
   ghcr.io/utopia123/goodcook:latest
 ```
 
-### 方式三：源码构建
+### 源码构建
 
 ```bash
 git clone https://github.com/utopia123/GoodCook.git
 cd GoodCook
-docker compose up -d --build   # compose 里注释 image、启用 build 即可
+docker compose up -d --build
 ```
 
 ### ⚠️ 首次部署前的两个一次性步骤
@@ -100,7 +119,7 @@ docker compose up -d --build   # compose 里注释 image、启用 build 即可
 1. 仓库的 `Actions` 页启用 workflows（fork 仓库默认可能禁用），手动 **Run workflow** 或推一次代码触发构建
 2. 构建成功后，进入仓库 `Packages` → 包设置 → 改为 **Public**，NAS 才能匿名拉取
 
-### 常用运维
+## 🧰 常用运维
 
 ```bash
 docker compose pull && docker compose up -d   # 升级到最新镜像
@@ -109,9 +128,9 @@ docker compose logs -f                        # 查看日志
 
 备份：直接复制 compose 目录下的 `./data` 文件夹，即为完整备份（数据库 + 全部图片）。
 
-**从原版 GanCook 迁移**：把原版挂载的 `data` 目录整体复制给本版本使用即可——数据库结构纯增量迁移，账号、饭局、图片全部保留。
+## 🧭 从原版 GanCook 迁移
 
-打开 `http://<NAS地址>:3000`，第一个注册的人即成为管理员。
+把原版挂载的 `data` 目录整体复制给本版本使用即可——数据库结构纯增量迁移，账号、饭局、图片全部保留。
 
 ## 🛠️ 本地开发
 

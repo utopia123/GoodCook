@@ -16,17 +16,29 @@
 
 ---
 
+## Table of contents
+
+- [Changes vs upstream](#-changes-vs-upstream-gancook)
+- [Deploy](#-deploy)
+- [Common operations](#-common-operations)
+- [Migrate from upstream GanCook](#-migrate-from-upstream-gancook)
+- [Development](#️-development)
+- [Tech stack](#-tech-stack)
+- [License](#-license)
+
 ## ✨ Changes vs upstream (GanCook)
 
-- 🏷️ **Custom dish categories** — family-wide categories (add/rename/delete), filterable dish page, category badges on cards
-- 🌗 **Light / Dark theme** — three-state switch (light / dark / system), no flash on load, persisted per device
-- 🧊 **Frosted-glass UI** — soft gradient page background + glassmorphism across all surfaces
-- 💻 **Native desktop layout** — sidebar navigation + left-aligned full-width content, two-column card grids; mobile keeps the floating bottom tab bar
-- 📦 **Dish backup as zip** — one-click export of dish JSON + all images; import accepts both zip and JSON (skips duplicates, auto-creates categories)
+- 🏷️ **Custom dish categories** — family-wide, filterable dish page, badges on cards
+- 🌗 **Light / Dark theme** — three-state switch (light / dark / system), persisted per device
+- 🧊 **Frosted-glass UI** — soft gradient background + glassmorphism on all surfaces
+- 💻 **Native desktop layout** — sidebar nav + full-width content, two-column card grids
+- 📦 **Dish backup as zip** — dish JSON + all images; import accepts zip and JSON
 - 🔍 **Tag filter when ordering** — filter the dish picker by dish tags
-- 🚫 Removed the contribution-wall (heatmap) module
+- 🚫 Removed the contribution-wall module
 
-## 🚀 Quick start
+## 🚀 Deploy
+
+Open `http://<NAS>:3000` — the first registered user becomes admin.
 
 ### Docker Compose (recommended)
 
@@ -37,39 +49,48 @@ curl -O https://raw.githubusercontent.com/utopia123/GoodCook/main/docker-compose
 docker compose up -d
 ```
 
-Or save the following as `docker-compose.yml` manually:
+Or save this minimal `docker-compose.yml` manually:
 
 ```yaml
 services:
   goodcook:
     image: ghcr.io/utopia123/goodcook:latest
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+    environment:
+      TZ: Asia/Shanghai
+```
+
+<details>
+<summary>📜 Fully commented docker-compose.yml (incl. docker.sock one-click update)</summary>
+
+```yaml
+services:
+  goodcook:
+    # Built automatically by GitHub Actions (updates on every push to main)
+    image: ghcr.io/utopia123/goodcook:latest
+    # To build from source: comment the image line above, uncomment below
     # build: .
     container_name: goodcook
     restart: unless-stopped
     ports:
       - '3000:3000'
     volumes:
+      # Data directory (SQLite + uploads). Back up by copying ./data
       - ./data:/data
+      # Docker socket: enables the in-app one-click update.
+      # Remove this line if your host has no Docker daemon or you don't want it.
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      # All optional. Works out of the box; secrets are generated on first start.
       TZ: Asia/Shanghai
 ```
 
-**Minimal version** (no comments, no docker.sock mount):
-
-```yaml
-services:
-  goodcook:
-    image: ghcr.io/utopia123/goodcook:latest
-    container_name: goodcook
-    restart: unless-stopped
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./data:/data
-    environment:
-      TZ: Asia/Shanghai
-```
+</details>
 
 ### docker run
 
@@ -92,9 +113,9 @@ docker compose up -d --build
 ### ⚠️ Two one-time steps before first deploy
 
 1. Enable workflows on the repo's `Actions` tab (disabled by default on forks), then trigger **Run workflow** or push once
-2. After the first successful build, go to the repo's `Packages` → package settings → set to **Public** so NAS devices can pull anonymously
+2. After the first successful build, set the package to **Public** under `Packages` settings so NAS devices can pull anonymously
 
-### Common operations
+## 🧰 Common operations
 
 ```bash
 docker compose pull && docker compose up -d   # upgrade to latest image
@@ -103,9 +124,9 @@ docker compose logs -f                        # view logs
 
 Backup: copy the `./data` folder next to your compose file — that's the complete backup (database + all images).
 
-**Migrating from upstream GanCook**: point this fork at the same `data` directory — the schema migrates incrementally and everything (accounts, meals, images) is preserved.
+## 🧭 Migrate from upstream GanCook
 
-Open `http://<NAS>:3000` — the first registered user becomes admin.
+Point this fork at the same `data` directory — the schema migrates incrementally and everything (accounts, meals, images) is preserved.
 
 ## 🛠️ Development
 
@@ -116,6 +137,15 @@ npm run db:migrate
 npm run dev   # http://localhost:3000
 ```
 
+## 🧱 Tech stack
+
+- **Next.js 16** (App Router · Server Actions) + React 19 + TypeScript
+- **SQLite** + Drizzle ORM (better-sqlite3)
+- Auth: bcrypt + jose-signed JWT + httpOnly cookies
+- Images: sharp → WebP on disk
+- Scheduling: in-process node-cron
+- Styling: TailwindCSS v4 + frosted-glass design system + Framer Motion
+
 ## 📄 License
 
-[MIT](LICENSE) · Upstream project: [Gloridust/GanCook](https://github.com/Gloridust/GanCook) · Made with ❤️ for family dinners
+[MIT](LICENSE) · Upstream project: [Gloridust/GanCook](https://github.com/Gloridust/GanCook) · Made with ❤️
