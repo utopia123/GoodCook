@@ -1,75 +1,54 @@
 <div align="center">
 
-<img src="public/logo.webp" width="96" height="96" alt="GanCook" />
+<img src="public/logo.webp" width="96" height="96" alt="GoodCook" />
 
-# 🍳 GanCook
+# 🍳 GoodCook
 
 **A self-hostable family meal-ordering app for your NAS — take turns cooking, order dishes, rate each meal.**
+**A heavily modified fork of [Gloridust/GanCook](https://github.com/Gloridust/GanCook) (MIT).**
 
-[![Docker](https://img.shields.io/badge/Docker-one--command-2496ED?logo=docker&logoColor=white)](#-quick-start)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Telegram](https://img.shields.io/badge/Telegram-Chat-26A5E4?logo=telegram&logoColor=white)](https://t.me/GanCookProj)
 
 [中文](README.md) · English
-
-💬 Questions / feedback / ideas → Telegram group [@GanCookProj](https://t.me/GanCookProj)
 
 </div>
 
 ---
 
-"Who's cooking today?" "What's for lunch?" — GanCook turns those daily questions into something cozy.
-It auto-opens tomorrow's meal the night before, lets everyone order, lets whoever cooks claim the meal,
-and shows a **GitHub-style contribution wall** of who's been cooking. Built for families, **no cloud required** —
-all data lives on your own NAS.
+## ✨ Changes vs upstream (GanCook)
 
-## ✨ Features
+- 🏷️ **Custom dish categories** — family-wide categories (add/rename/delete), filterable dish page, category badges on cards
+- 🌗 **Light / Dark theme** — three-state switch (light / dark / system), no flash on load, persisted per device
+- 🧊 **Frosted-glass UI** — soft gradient page background + glassmorphism across all surfaces
+- 💻 **Native desktop layout** — sidebar navigation + left-aligned full-width content, two-column card grids; mobile keeps the floating bottom tab bar
+- 📦 **Dish backup as zip** — one-click export of dish JSON + all images; import accepts both zip and JSON (skips duplicates, auto-creates categories)
+- 🔍 **Tag filter when ordering** — filter the dish picker by dish tags
+- 🚫 Removed the contribution-wall (heatmap) module
 
-- 🚀 **Truly zero-config** — one `docker run`, no env vars to set; secrets are auto-generated & persisted on first boot.
-- 🗄️ **Single container + SQLite** — no external DB, no cloud. Backup = copy one `data` folder.
-- 👨‍👩‍👧 **One account, many roles** — no role at signup; anyone can cook or order. The cook is claimed **per meal**.
-- 👆 **Tap-to-login** — on a shared device, pick your avatar and enter a 6-digit code; no typing.
-- ⏰ **Auto meals (like alarms)** — add as many rules as you like: meal, time, how early to open, how early to close, and which weekdays. Auto-opens, auto-advances, auto-completes.
-- 🌱 **Contribution wall** — GitHub-style heatmaps for cooking & ordering.
-- 🖼️ **Fast images** — dish photos are compressed to WebP and stored on disk (no base64-in-DB).
-- 🥛 **"Milk Fabric" UI** — soft neumorphism, mobile-first, installable as a PWA.
-- 🌍 **Bilingual** — switch between English and 中文 on the login page or in Me · Settings.
-- 🔄 **Painless upgrades** — pull the new image; the DB migrates itself and sessions persist.
+## 🚀 Quick start (build from source)
 
-## 🚀 Quick start
-
-Image: `gloridust/gancook:latest` (Docker Hub) or `ghcr.io/gloridust/gancook:latest` (GHCR).
+> No prebuilt Docker image is published for this fork:
 
 ```bash
-docker run -d --name gancook \
-  -p 3000:3000 \
-  -v ./data:/data \
-  --restart unless-stopped \
-  gloridust/gancook:latest
+git clone https://github.com/utopia123/GoodCook.git
+cd GoodCook
+docker compose up -d --build
 ```
 
-Open `http://<your-nas>:3000` — the first person to register becomes the admin. That's it.
+Open `http://<NAS>:3000` — the first registered user becomes admin. All state lives in the mounted `data` directory (SQLite + images); copy it to back up or migrate.
 
-Or with compose:
+**Migrating from upstream GanCook**: point this fork at the same `data` directory — the schema migrates incrementally and everything (accounts, meals, images) is preserved.
+
+## 🛠️ Development
 
 ```bash
-curl -O https://raw.githubusercontent.com/Gloridust/GanCook/main/docker-compose.yml
-docker compose up -d
+npm install
+cp .env.example .env.local
+npm run db:migrate
+npm run dev   # http://localhost:3000
 ```
-
-## 🔄 Upgrade
-
-```bash
-docker compose pull && docker compose up -d
-```
-
-Data and secrets live in the `data` volume; the database migrates automatically and you stay logged in.
-
-## 🧱 Stack
-
-Next.js 16 (App Router, Server Actions) · React 19 · TypeScript · SQLite + Drizzle ORM · sharp · node-cron · TailwindCSS v4.
 
 ## 📄 License
 
-[MIT](LICENSE)
+[MIT](LICENSE) · Upstream project: [Gloridust/GanCook](https://github.com/Gloridust/GanCook) · Made with ❤️ for family dinners
