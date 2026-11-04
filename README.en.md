@@ -21,6 +21,7 @@
 - [Changes vs upstream](#-changes-vs-upstream-gancook)
 - [Deploy](#-deploy)
 - [Common operations](#-common-operations)
+- [Backup & restore](#-backup--restore)
 - [Migrate from upstream GanCook](#-migrate-from-upstream-gancook)
 - [Development](#️-development)
 - [Tech stack](#-tech-stack)
@@ -33,7 +34,11 @@
 - 🧊 **Frosted-glass UI** — soft gradient background + glassmorphism on all surfaces
 - 💻 **Native desktop layout** — sidebar nav + full-width content, two-column card grids
 - 📦 **Dish backup as zip** — dish JSON + all images; import accepts zip and JSON
-- 🔍 **Tag filter when ordering** — filter the dish picker by dish tags
+- 🔍 **Two-way ordering filter** — filter the dish picker by category + tag together
+- 🧂 **Pantry** — aromatics / spices / seasonings sections with effect, best pairings and what to avoid (20 common items preloaded)
+- 📖 **Recipes** — your own recipes (ingredients + steps + time + difficulty), 10 popular dishes preloaded
+- 📊 **Dish insights** — most ordered / not had lately (≥14 days) / never ordered
+- 💾 **Daily automatic backups** — database + images + secrets, scheduled and rotated
 - 🚫 Removed the contribution-wall module
 
 ## 🚀 Deploy
@@ -123,6 +128,31 @@ docker compose logs -f                        # view logs
 ```
 
 Backup: copy the `./data` folder next to your compose file — that's the complete backup (database + all images).
+
+## 💾 Backup & restore
+
+**Automatic**: Me → Backups → Settings, configure:
+
+- daily backup time (default `03:00`)
+- copies to keep (default 5, range 1–30; oldest pruned)
+
+Backups live in `data/backups/` as `goodcook-backup-YYYY-MM-DD_HHmm.zip`, containing:
+
+- `app.db` (consistent SQLite snapshot, safe while the app is running)
+- `uploads/` (all dish and avatar images)
+- `auth.secret` / `cron.secret` (session and scheduler keys)
+- `backup-info.json`
+
+**Manual**: hit "Back up now" in the same panel.
+
+**Restore**:
+
+```bash
+docker compose down
+cp -r data data.bak-$(date +%F)                        # optional safety copy
+cd data && unzip goodcook-backup-2026-11-05_0300.zip   # leave backups/ untouched
+cd .. && docker compose up -d                          # migrations run automatically
+```
 
 ## 🧭 Migrate from upstream GanCook
 
