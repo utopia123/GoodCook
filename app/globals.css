@@ -7,6 +7,7 @@
      不再依赖 prefers-color-scheme 媒体查询
    ────────────────────────────────────────────────────────── */
 :root {
+  color-scheme: light;
   --radius: 24px;
   --mf-highlight: 255 255 255;
   --mf-glass-blur: 18px;
@@ -43,6 +44,9 @@ html[data-theme='green'] {
       900px 640px at -8% 104%, rgb(var(--mf-accent-soft) / 0.12), transparent 58%
     ),
     var(--mf-base);
+}
+html.dark {
+  color-scheme: dark;
 }
 html.dark,
 html[data-theme='green'].dark {
