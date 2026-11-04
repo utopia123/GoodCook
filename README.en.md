@@ -115,11 +115,6 @@ cd GoodCook
 docker compose up -d --build
 ```
 
-### ⚠️ Two one-time steps before first deploy
-
-1. Enable workflows on the repo's `Actions` tab (disabled by default on forks), then trigger **Run workflow** or push once
-2. After the first successful build, set the package to **Public** under `Packages` settings so NAS devices can pull anonymously
-
 ## 🧰 Common operations
 
 ```bash

@@ -23,7 +23,6 @@
   - [Docker Compose（推荐）](#docker-compose推荐)
   - [docker run](#docker-run)
   - [源码构建](#源码构建)
-  - [首次部署前的两个一次性步骤](#️-首次部署前的两个一次性步骤)
 - [常用运维](#-常用运维)
 - [数据备份与还原](#-数据备份与还原)
 - [从原版 GanCook 迁移](#-从原版-gancook-迁移)
@@ -118,11 +117,6 @@ git clone https://github.com/utopia123/GoodCook.git
 cd GoodCook
 docker compose up -d --build
 ```
-
-### ⚠️ 首次部署前的两个一次性步骤
-
-1. 仓库的 `Actions` 页启用 workflows（fork 仓库默认可能禁用），手动 **Run workflow** 或推一次代码触发构建
-2. 构建成功后，进入仓库 `Packages` → 包设置 → 改为 **Public**，NAS 才能匿名拉取
 
 ## 🧰 常用运维
 
