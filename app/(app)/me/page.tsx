@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { EditProfile } from '@/components/me/edit-profile'
 import { SettingsList } from '@/components/me/settings-list'
 import { BackupSettings } from '@/components/me/backup-settings'
-import { getBackupConfig } from '@/lib/settings'
+import { getBackupConfig, getInsightCount } from '@/lib/settings'
 import { listBackups } from '@/lib/backup'
 
 export const dynamic = 'force-dynamic'
@@ -45,7 +45,7 @@ export default async function MePage() {
         </button>
       </EditProfile>
 
-      <SettingsList isAdmin={user.isAdmin} />
+      <SettingsList isAdmin={user.isAdmin} insightCount={getInsightCount()} />
 
       {user.isAdmin && (
         <BackupSettings config={getBackupConfig()} files={await listBackups()} />

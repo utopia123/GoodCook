@@ -125,6 +125,15 @@ export const recipes = sqliteTable(
   (t) => [index('idx_recipes_created').on(t.createdAt)],
 )
 
+// ── 月度回顾（每月自动生成一条） ──
+export const monthlyReports = sqliteTable('monthly_reports', {
+  month: text('month').primaryKey(), // YYYY-MM
+  meals: integer('meals').notNull().default(0),
+  orders: integer('orders').notNull().default(0),
+  topDishes: text('top_dishes').notNull().default('[]'), // JSON [{name,count}]
+  createdAt: integer('created_at').notNull().default(now),
+})
+
 // ── 饭局（一餐） ──
 export const meals = sqliteTable(
   'meals',
@@ -250,6 +259,7 @@ export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 export type DishCategory = typeof dishCategories.$inferSelect
 export type NewDishCategory = typeof dishCategories.$inferInsert
+export type MonthlyReport = typeof monthlyReports.$inferSelect
 export type Condiment = typeof condiments.$inferSelect
 export type NewCondiment = typeof condiments.$inferInsert
 export type Recipe = typeof recipes.$inferSelect

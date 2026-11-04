@@ -13,6 +13,7 @@ import { MealCard } from '@/components/meals/meal-card'
 import { CreateMealDialog } from '@/components/meals/create-meal-dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { PalettePicker } from '@/components/me/palette-picker'
+import { latestMonthlyReport } from '@/lib/reports'
 
 export const dynamic = 'force-dynamic'
 
@@ -76,6 +77,34 @@ export default async function HomePage() {
           </p>
         </div>
       </div>
+
+      {(() => {
+        const report = latestMonthlyReport()
+        if (!report || (report.meals === 0 && report.orders === 0)) return null
+        return (
+          <div className="mf-raised mf-solid mb-5 p-4">
+            <div className="flex items-baseline justify-between gap-2">
+              <p className="text-sm font-semibold text-ink">
+                {t('report.title', { month: report.month })}
+              </p>
+              <p className="text-xs text-secondary">
+                {t('report.line', {
+                  meals: report.meals,
+                  orders: report.orders,
+                })}
+              </p>
+            </div>
+            {report.topDishes.length > 0 && (
+              <p className="mt-1.5 truncate text-xs text-secondary">
+                {t('report.top')}：
+                {report.topDishes
+                  .map((d) => `${d.name} ${d.count}`)
+                  .join(' · ')}
+              </p>
+            )}
+          </div>
+        )
+      })()}
 
       <div className="mb-3 flex items-center justify-between">
         <h2 className="mf-section text-[15px] text-ink">{t('home.upcoming')}</h2>

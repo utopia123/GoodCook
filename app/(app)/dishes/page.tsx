@@ -8,7 +8,7 @@ import {
   orders,
 } from '@/lib/db/schema'
 import { requireUser } from '@/lib/auth/user'
-import { getSettings } from '@/lib/settings'
+import { getInsightCount, getSettings } from '@/lib/settings'
 import { dayjs, todayLocal } from '@/lib/time'
 import { getT } from '@/lib/i18n/server'
 import { PageHeader } from '@/components/page-header'
@@ -75,11 +75,12 @@ export default async function DishesPage({
   const statOf = new Map(orderRows.map((r) => [r.dishId, r]))
   const totalOrders = orderRows.reduce((sum, r) => sum + r.c, 0)
   const todayStr = todayLocal(tz)
+  const insightCount = getInsightCount()
 
   const hotItems = active
     .filter((d) => statOf.get(d.id))
     .sort((a, b) => (statOf.get(b.id)?.c ?? 0) - (statOf.get(a.id)?.c ?? 0))
-    .slice(0, 3)
+    .slice(0, insightCount)
     .map((d) => ({
       name: d.name,
       meta: t('dishes.insights.times', { n: statOf.get(d.id)?.c ?? 0 }),
@@ -95,7 +96,7 @@ export default async function DishesPage({
         dayjs(statOf.get(a.id)!.last!).valueOf() -
         dayjs(statOf.get(b.id)!.last!).valueOf(),
     )
-    .slice(0, 3)
+    .slice(0, insightCount)
     .map((d) => ({
       name: d.name,
       meta: t('dishes.insights.days', {

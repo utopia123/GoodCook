@@ -63,3 +63,14 @@ export function setBackupConfig(time: string, keep: number) {
   setSetting('backupTime', time)
   setSetting('backupKeep', String(keep))
 }
+
+
+// ── 洞察条数（我的页可调） ──
+export function getInsightCount(): number {
+  const raw = Number(getSetting('insightCount') ?? '3')
+  return Number.isFinite(raw) ? Math.min(10, Math.max(2, Math.round(raw))) : 3
+}
+
+export function setInsightCount(n: number) {
+  setSetting('insightCount', String(n))
+}

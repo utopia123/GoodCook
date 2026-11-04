@@ -29,6 +29,13 @@
       "when": 1793818707934,
       "tag": "0003_condiment_details",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793825349389,
+      "tag": "0004_monthly_reports",
+      "breakpoints": true
     }
   ]
 }
