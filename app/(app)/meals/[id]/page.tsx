@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ChevronLeft, Clock, Timer, ChefHat, Soup } from 'lucide-react'
-import { eq } from 'drizzle-orm'
+import { asc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db/client'
-import { dishes as dishesTable } from '@/lib/db/schema'
+import { dishes as dishesTable, dishCategories as dishCategoriesTable } from '@/lib/db/schema'
 import { requireUser } from '@/lib/auth/user'
 import { getSettings } from '@/lib/settings'
 import { getMealDetail, myOrderedDishIds } from '@/lib/meals'
@@ -36,6 +36,11 @@ export default async function MealDetailPage({
     .select()
     .from(dishesTable)
     .where(eq(dishesTable.status, 'active'))
+    .all()
+  const dishCategories = db
+    .select({ id: dishCategoriesTable.id, name: dishCategoriesTable.name })
+    .from(dishCategoriesTable)
+    .orderBy(asc(dishCategoriesTable.sortOrder))
     .all()
   const myIds = [...myOrderedDishIds(id, me.id)]
 
@@ -149,6 +154,7 @@ export default async function MealDetailPage({
           <OrderPicker
             mealId={meal.id}
             dishes={activeDishes}
+            categories={dishCategories}
             initialSelected={myIds}
           />
         </section>

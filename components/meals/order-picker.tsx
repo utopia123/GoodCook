@@ -12,10 +12,12 @@ import type { Dish } from '@/lib/db/schema'
 export function OrderPicker({
   mealId,
   dishes,
+  categories = [],
   initialSelected,
 }: {
   mealId: string
   dishes: Dish[]
+  categories?: { id: string; name: string }[]
   initialSelected: string[]
 }) {
   const router = useRouter()
@@ -24,16 +26,25 @@ export function OrderPicker({
     new Set(initialSelected),
   )
   const [activeTag, setActiveTag] = useState('')
+  const [activeCat, setActiveCat] = useState('')
   const [, startTransition] = useTransition()
   const [error, setError] = useState('')
 
-  // 全部菜品里出现过的标签（去重），作为点菜筛选依据
-  const allTags = Array.from(
-    new Set(dishes.flatMap((d) => d.tags ?? [])),
-  ).slice(0, 12)
-  const visible = activeTag
-    ? dishes.filter((d) => (d.tags ?? []).includes(activeTag))
-    : dishes
+  // 全部菜品里出现过的标签（去重，不过滤上限——筛选必须全）
+  const allTags = Array.from(new Set(dishes.flatMap((d) => d.tags ?? [])))
+  // 只在有菜的分类才展示
+  const shownCats = categories.filter((c) =>
+    dishes.some((d) => d.categoryId === c.id),
+  )
+  const hasUncategorized = dishes.some((d) => !d.categoryId)
+
+  const visible = dishes.filter((d) => {
+    if (activeCat === 'none' && d.categoryId) return false
+    if (activeCat && activeCat !== 'none' && d.categoryId !== activeCat)
+      return false
+    if (activeTag && !(d.tags ?? []).includes(activeTag)) return false
+    return true
+  })
 
   const toggle = (dishId: string) => {
     const next = new Set(selected)
@@ -70,6 +81,51 @@ export function OrderPicker({
 
   return (
     <div>
+      {(shownCats.length > 0 || hasUncategorized) && (
+        <div className="mb-2 flex items-center gap-2 overflow-x-auto pb-1">
+          <button
+            type="button"
+            onClick={() => setActiveCat('')}
+            className={cn(
+              'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              !activeCat
+                ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                : 'mf-inset text-secondary hover:text-ink',
+            )}
+          >
+            {t('dishes.all')}
+          </button>
+          {shownCats.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCat(activeCat === cat.id ? '' : cat.id)}
+              className={cn(
+                'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                activeCat === cat.id
+                  ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                  : 'mf-inset text-secondary hover:text-ink',
+              )}
+            >
+              {cat.name}
+            </button>
+          ))}
+          {hasUncategorized && (
+            <button
+              type="button"
+              onClick={() => setActiveCat(activeCat === 'none' ? '' : 'none')}
+              className={cn(
+                'shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                activeCat === 'none'
+                  ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
+                  : 'mf-inset text-secondary hover:text-ink',
+              )}
+            >
+              {t('dishes.uncategorized')}
+            </button>
+          )}
+        </div>
+      )}
       {allTags.length > 0 && (
         <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1">
           <button

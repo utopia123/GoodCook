@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { eq, sql } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '@/lib/db/client'
 import { dishes, dishCategories } from '@/lib/db/schema'
@@ -151,6 +151,35 @@ export async function deleteDish(id: string): Promise<ActionResult> {
   db.delete(dishes).where(eq(dishes.id, id)).run()
   revalidatePath('/dishes')
   return { ok: true }
+}
+
+// ── 批量归类：把选中的菜品移入某个分类 ──
+
+export async function assignDishesToCategory(
+  categoryId: string,
+  dishIds: string[],
+): Promise<ActionResult & { moved?: number }> {
+  const t = await getT()
+  const me = await getCurrentUser()
+  if (!me) return { ok: false, error: t('err.loginRequired') }
+
+  const cat = db
+    .select()
+    .from(dishCategories)
+    .where(eq(dishCategories.id, categoryId))
+    .get()
+  if (!cat) return { ok: false, error: t('err.categoryNotFound') }
+
+  const ids = [...new Set(dishIds.filter(Boolean))].slice(0, 500)
+  if (ids.length === 0) return { ok: true, moved: 0 }
+
+  db.update(dishes)
+    .set({ categoryId })
+    .where(inArray(dishes.id, ids))
+    .run()
+
+  revalidatePath('/dishes')
+  return { ok: true, moved: ids.length }
 }
 
 // ── 导入（菜品页上传 JSON 或 zip 备份） ──
