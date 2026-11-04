@@ -1,14 +1,19 @@
 name: Build & Publish Docker image
 
 on:
+  # 只在 main 推送时构建（tag 推送不再触发，避免同一 commit 构建两遍）
   push:
     branches: [main]
-    tags: ['v*']
   workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
+
+# 同一分支的新推送会取消上一次还没跑完的构建
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-push:
@@ -16,22 +21,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 版本号唯一来源：package.json（发布新版本 = 改这里再推）
+      - id: ver
+        run: echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
       - id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
+            type=raw,value=latest
+            type=raw,value=${{ steps.ver.outputs.value }}
             type=sha,prefix=
-
-      - id: ver
-        run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-          fi
 
       - uses: docker/setup-buildx-action@v3
 
