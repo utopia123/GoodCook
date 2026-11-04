@@ -141,3 +141,4 @@ data/
 
 # 本地环境变量保留 example
 !.env.example
+logo-drafts/
