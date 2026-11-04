@@ -1,7 +1,7 @@
 {
   "name": "GoodCook",
   "short_name": "GoodCook",
-  "description": "可自部署到 NAS 的自用做饭系统",
+  "description": "部署到 NAS 的做饭系统",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f6f4",
