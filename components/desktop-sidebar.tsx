@@ -61,10 +61,11 @@ export function DesktopSidebar() {
           href="https://github.com/utopia123/GoodCook"
           target="_blank"
           rel="noreferrer"
-          className="mt-1 flex items-center gap-2 rounded-2xl px-3.5 py-2.5 text-sm text-secondary transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/5"
+          title="utopia123/GoodCook"
+          aria-label="GitHub: utopia123/GoodCook"
+          className="mt-1 flex w-fit items-center rounded-xl p-2.5 text-secondary transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/5"
         >
-          <Github className="h-4 w-4" />
-          <span className="truncate">utopia123/GoodCook</span>
+          <Github className="h-[18px] w-[18px]" />
         </a>
       </div>
     </aside>

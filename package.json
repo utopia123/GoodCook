@@ -1,13 +1,13 @@
 {
   "name": "goodcook",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "干饭厨子 GanCook — 可自部署到 NAS 的家庭点菜系统",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint . && node scripts/check-i18n.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx lib/db/migrate.ts",
     "db:studio": "drizzle-kit studio"

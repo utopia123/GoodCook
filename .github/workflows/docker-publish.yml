@@ -27,6 +27,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # 词条一致性检查（中文/英文 key 必须齐平，无需安装依赖）
+      - name: Check i18n keys
+        run: node scripts/check-i18n.mjs
+
       # 版本号唯一来源：package.json（发布新版本 = 改这里再推）
       - id: ver
         run: echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
