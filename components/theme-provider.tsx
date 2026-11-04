@@ -29,6 +29,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = (localStorage.getItem(KEY) as Theme) || 'system'
+    // 从 localStorage 同步持久化状态：外部存储初始化，非级联渲染
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThemeState(saved)
     apply(saved)
     const mq = window.matchMedia('(prefers-color-scheme: dark)')

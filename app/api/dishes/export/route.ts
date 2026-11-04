@@ -61,7 +61,6 @@ export async function GET(request: Request) {
   const zip = new JSZip()
   zip.file('dishes.json', JSON.stringify(payload, null, 2))
 
-  let images = 0
   for (const d of all) {
     if (!d.imagePath) continue
     // 仅打包菜品图片（dishes/ 子目录），头像不导出
@@ -69,7 +68,6 @@ export async function GET(request: Request) {
     try {
       const buf = await readFile(join(UPLOAD_DIR, d.imagePath))
       zip.file(`images/${d.imagePath}`, buf)
-      images++
     } catch {
       // 图片文件缺失时跳过，不阻断导出
     }

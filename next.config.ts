@@ -3,6 +3,8 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   // 单容器自部署：输出独立运行包，Docker 只需拷贝 standalone
   output: 'standalone',
+  // 不向响应泄露框架版本
+  poweredByHeader: false,
   // better-sqlite3 / sharp 是原生模块，标记为外部依赖避免被打包
   serverExternalPackages: ['better-sqlite3', 'node-cron', 'sharp'],
   experimental: {

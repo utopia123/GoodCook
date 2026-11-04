@@ -28,6 +28,8 @@ export function ImageCropper({
   const [pixels, setPixels] = useState<CropArea | null>(null)
   const [busy, setBusy] = useState(false)
   const [mounted, setMounted] = useState(false)
+  // 客户端挂载标记：避免 SSR 水合不匹配（cropper 仅浏览器可用）
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), [])
 
   const onCropComplete = useCallback((_: unknown, areaPixels: CropArea) => {

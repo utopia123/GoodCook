@@ -38,7 +38,8 @@ if [ -S /var/run/docker.sock ]; then
 fi
 
 # 数据目录归属 app（容器以 root 启动，服务以 app 运行）
-chown -R app:app "$DATA_DIR" 2>/dev/null || true
+# 只修正属主不对的文件——启动时几乎零开销（chown -R 在图片多时要跑数秒）
+find "$DATA_DIR" ! -user app -exec chown app:app {} + 2>/dev/null || true
 
 # 降权到 app 运行服务；instrumentation 启动时自动迁移数据库并拉起调度
 exec gosu app node server.js

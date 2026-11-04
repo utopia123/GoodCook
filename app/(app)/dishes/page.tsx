@@ -54,7 +54,6 @@ export default async function DishesPage({
   }
   const activeView = active.filter(match)
   const archivedView = archived.filter(match)
-  const filtering = Boolean(cat && cat !== 'all')
 
   const cardOf = (dish: (typeof all)[number], dimmed?: boolean) => {
     const node = (

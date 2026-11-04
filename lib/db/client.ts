@@ -14,6 +14,8 @@ function createConnection() {
   mkdirSync(DATA_DIR, { recursive: true })
   const sqlite = new Database(DB_PATH)
   sqlite.pragma('journal_mode = WAL')
+  // WAL + synchronous=NORMAL：官方推荐组合，写入更快且掉电不损坏库
+  sqlite.pragma('synchronous = NORMAL')
   sqlite.pragma('foreign_keys = ON')
   sqlite.pragma('busy_timeout = 5000')
   return sqlite
