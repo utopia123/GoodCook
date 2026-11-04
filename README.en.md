@@ -55,6 +55,22 @@ services:
       TZ: Asia/Shanghai
 ```
 
+**Minimal version** (no comments, no docker.sock mount):
+
+```yaml
+services:
+  goodcook:
+    image: ghcr.io/utopia123/goodcook:latest
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+    environment:
+      TZ: Asia/Shanghai
+```
+
 ### docker run
 
 ```bash

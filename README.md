@@ -61,6 +61,22 @@ services:
       TZ: Asia/Shanghai
 ```
 
+**纯享版**（无注释，去掉 docker.sock）：
+
+```yaml
+services:
+  goodcook:
+    image: ghcr.io/utopia123/goodcook:latest
+    container_name: goodcook
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./data:/data
+    environment:
+      TZ: Asia/Shanghai
+```
+
 ### 方式二：docker run
 
 ```bash
