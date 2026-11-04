@@ -4,6 +4,11 @@ on:
   # 只在 main 推送时构建（tag 推送不再触发，避免同一 commit 构建两遍）
   push:
     branches: [main]
+    # 纯文档/图片改动不触发镜像构建（省时省钱）
+    paths-ignore:
+      - '**/*.md'
+      - 'doc/**'
+      - 'LICENSE'
   workflow_dispatch:
 
 permissions:
