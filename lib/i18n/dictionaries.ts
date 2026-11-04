@@ -164,6 +164,7 @@ const zh: Messages = {
   'theme.light': '浅色',
   'theme.dark': '深色',
   'theme.system': '跟随系统',
+  'theme.switchTo': '切换到{name}',
   // me
   'me.title': '我的',
   'me.admin': '管理员',
@@ -422,6 +423,7 @@ const en: Messages = {
   'theme.light': 'Light',
   'theme.dark': 'Dark',
   'theme.system': 'System',
+  'theme.switchTo': 'Switch to {name}',
   'me.title': 'Me',
   'me.admin': 'Admin',
   'me.changePassword': 'Change password',

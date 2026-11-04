@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 
 const ORDER: Theme[] = ['light', 'dark', 'system']
 
-/** 循环切换 浅色 → 深色 → 跟随系统 */
+/** 显示当前外观状态；点一下循环切换 浅色 → 深色 → 跟随系统 */
 export function ThemeToggle({
   variant = 'chip',
   className,
@@ -18,8 +18,9 @@ export function ThemeToggle({
   const { theme, setTheme } = useTheme()
   const t = useT()
   const next = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]
-  const label = t(`theme.${next}`)
-  const Icon = next === 'light' ? Sun : next === 'dark' ? Moon : Monitor
+  // 显示「当前」状态，而不是下一档（避免深色模式下却显示“跟随系统”的误导）
+  const label = t(`theme.${theme}`)
+  const Icon = theme === 'light' ? Sun : theme === 'dark' ? Moon : Monitor
 
   if (variant === 'row') {
     return (
@@ -39,9 +40,9 @@ export function ThemeToggle({
     <button
       type="button"
       onClick={() => setTheme(next)}
-      title={label}
+      title={t('theme.switchTo', { name: t(`theme.${next}`) })}
       className={cn(
-        'flex items-center gap-2 rounded-2xl px-3.5 py-2.5 text-[15px] font-medium text-secondary transition-colors hover:bg-black/5 hover:text-ink',
+        'flex items-center gap-2 rounded-2xl px-3.5 py-2.5 text-[15px] font-medium text-secondary transition-colors hover:bg-black/5 hover:text-ink dark:hover:bg-white/5',
         className,
       )}
     >
