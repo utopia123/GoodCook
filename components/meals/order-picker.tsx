@@ -277,7 +277,7 @@ export function OrderPicker({
       {/* 推荐：常点与久未吃合并为一排 */}
       {!keyword && suggestRow.length > 0 && (
         <div className="mb-3">
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:grid md:grid-cols-4 md:gap-3 md:overflow-visible md:px-0">
             {suggestRow.map(({ h, kind }) => {
               const d = dishById.get(h.id)
               if (!d) return null
@@ -288,7 +288,7 @@ export function OrderPicker({
                   type="button"
                   onClick={() => setDetail(d)}
                   className={cn(
-                    'mf-raised mf-pressable w-[116px] shrink-0 overflow-hidden text-left',
+                    'mf-raised mf-pressable w-[116px] shrink-0 overflow-hidden text-left md:w-auto md:shrink',
                     on && 'ring-2 ring-accent',
                   )}
                 >
@@ -349,7 +349,7 @@ export function OrderPicker({
           {t('picker.noMatch')}
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-3 gap-2.5 md:grid-cols-4">
           {visible.map((dish) => {
           const on = selected.has(dish.id)
           return (

@@ -163,7 +163,7 @@ export default async function MealDetailPage({
             categories={dishCategories}
             initialSelected={myIds}
             heat={heat}
-            suggestCount={insightN}
+            suggestCount={Math.max(8, insightN)}
           />
         </section>
       )}
