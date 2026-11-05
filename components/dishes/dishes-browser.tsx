@@ -152,7 +152,7 @@ export function DishesBrowser({
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 md:gap-4">
+      <div className="mf-stagger grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 md:gap-4">
         {active.map((dish) => card(dish))}
       </div>
 
@@ -161,7 +161,7 @@ export function DishesBrowser({
           <p className="mb-3 mt-7 text-sm font-medium text-secondary">
             {t('dishes.archived')}
           </p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 md:gap-4">
+          <div className="mf-stagger grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 md:gap-4">
             {archived.map((dish) => card(dish, true))}
           </div>
         </>

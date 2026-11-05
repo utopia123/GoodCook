@@ -13,6 +13,7 @@ import { MealCard } from '@/components/meals/meal-card'
 import { CreateMealDialog } from '@/components/meals/create-meal-dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { PalettePicker } from '@/components/me/palette-picker'
+import { RecipeSearch } from '@/components/home/recipe-search'
 import { getInsightCount } from '@/lib/settings'
 import { dishHeat } from '@/lib/insights'
 import { DishInsights, type InsightCard } from '@/components/dishes/dish-insights'
@@ -100,6 +101,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <RecipeSearch />
+
       {/* 外观快捷入口：明暗 + 配色 */}
       <div className="mb-3 flex items-center justify-end gap-2">
         <PalettePicker />

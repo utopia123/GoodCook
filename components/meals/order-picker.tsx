@@ -349,7 +349,7 @@ export function OrderPicker({
           {t('picker.noMatch')}
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-2.5 md:grid-cols-4">
+        <div className="mf-stagger grid grid-cols-3 gap-2.5 md:grid-cols-4">
           {visible.map((dish) => {
           const on = selected.has(dish.id)
           return (

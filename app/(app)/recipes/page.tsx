@@ -46,7 +46,7 @@ export default async function RecipesPage() {
           }
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mf-stagger grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {all.map((r) => (
             <RecipeForm key={r.id} mode="edit" recipe={r}>
               <button

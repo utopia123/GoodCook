@@ -61,7 +61,7 @@ export default async function CondimentsPage() {
                 <p className="mf-section mb-2 text-[13px] text-ink">
                   {t(`condiments.kind.${kind}`)}
                 </p>
-                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="mf-stagger grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
                   {items.map((c) => (
                     <CondimentForm key={c.id} mode="edit" item={c}>
                       <button

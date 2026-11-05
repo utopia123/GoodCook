@@ -503,13 +503,6 @@ body {
 }
 
 /* ── 卡片（磨砂浮起面）── */
-.mf-raised.mf-solid {
-  /* 实底卡片：同一屏内所有卡片底色完全一致，不受页面渐变影响 */
-  background: var(--mf-surface);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
 .mf-raised {
   border: 1px solid var(--mf-glass-border);
   border-radius: var(--radius);
@@ -719,4 +712,59 @@ html[data-skin='pixel'] .mf-nav {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+
+/* ───────── 轻量动画（仅 CSS，尊重系统「减少动效」） ───────── */
+@keyframes mf-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes mf-sheet-in {
+  from { opacity: 0; transform: translateY(14px) scale(.985); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes mf-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 页面切换 */
+.mf-page-anim {
+  animation: mf-fade-up 0.26s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* 弹窗与遮罩 */
+.mf-sheet {
+  animation: mf-sheet-in 0.24s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.mf-overlay {
+  animation: mf-overlay-in 0.18s ease-out both;
+}
+
+/* 列表卡片依次浮现（最多 8 个，避免长列表卡顿） */
+.mf-stagger > * {
+  animation: mf-fade-up 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.mf-stagger > *:nth-child(2) { animation-delay: 0.03s; }
+.mf-stagger > *:nth-child(3) { animation-delay: 0.06s; }
+.mf-stagger > *:nth-child(4) { animation-delay: 0.09s; }
+.mf-stagger > *:nth-child(5) { animation-delay: 0.12s; }
+.mf-stagger > *:nth-child(6) { animation-delay: 0.15s; }
+.mf-stagger > *:nth-child(n + 7) { animation-delay: 0.18s; }
+
+/* 长列表只让前 12 个动，避免上百张卡片同时动画 */
+.mf-stagger > *:nth-child(n + 13) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-page-anim,
+  .mf-sheet,
+  .mf-overlay,
+  .mf-stagger > * {
+    animation: none !important;
+  }
 }
