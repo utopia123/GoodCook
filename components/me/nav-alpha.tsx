@@ -3,7 +3,7 @@
 import { useT } from '@/components/i18n-provider'
 import { useTheme } from '@/components/theme-provider'
 
-/** Tab 栏透明度（60%–100%），实时生效 */
+/** Tab 栏透明度（25%–100%），实时生效 */
 export function NavAlphaSlider() {
   const t = useT()
   const { navAlpha, setNavAlpha } = useTheme()
@@ -11,7 +11,7 @@ export function NavAlphaSlider() {
     <div className="flex items-center gap-2">
       <input
         type="range"
-        min={60}
+        min={25}
         max={100}
         step={2}
         value={navAlpha}

@@ -106,7 +106,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const savedAlpha = Number(localStorage.getItem(NAV_ALPHA_KEY) ?? '88')
     const alpha = Number.isFinite(savedAlpha)
-      ? Math.min(100, Math.max(60, savedAlpha))
+      ? Math.min(100, Math.max(25, savedAlpha))
       : 88
     setNavAlphaState(alpha)
     applyNavAlpha(alpha)
@@ -165,7 +165,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setNavAlpha = useCallback((n: number) => {
-    const v = Math.min(100, Math.max(60, Math.round(n)))
+    const v = Math.min(100, Math.max(25, Math.round(n)))
     localStorage.setItem(NAV_ALPHA_KEY, String(v))
     setNavAlphaState(v)
     applyNavAlpha(v)
