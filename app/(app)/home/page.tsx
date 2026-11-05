@@ -13,7 +13,9 @@ import { MealCard } from '@/components/meals/meal-card'
 import { CreateMealDialog } from '@/components/meals/create-meal-dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { PalettePicker } from '@/components/me/palette-picker'
-import { latestMonthlyReport } from '@/lib/reports'
+import { getInsightCount } from '@/lib/settings'
+import { dishHeat } from '@/lib/insights'
+import { DishInsights, type InsightCard } from '@/components/dishes/dish-insights'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,6 +59,45 @@ export default async function HomePage() {
   }
   const members = new Map(listMembers().map((m) => [m.id, m.name]))
 
+  // 菜品热度洞察
+  const { heat } = dishHeat()
+  const insightN = getInsightCount()
+  const hotItems = heat
+    .filter((h) => h.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, insightN)
+    .map((h) => ({ name: h.name, meta: t('dishes.insights.times', { n: h.count }) }))
+  const staleItems = heat
+    .filter((h) => (h.daysAgo ?? 0) >= 14)
+    .sort((a, b) => (b.daysAgo ?? 0) - (a.daysAgo ?? 0))
+    .slice(0, insightN)
+    .map((h) => ({
+      name: h.name,
+      meta: t('dishes.insights.days', { n: h.daysAgo ?? 0 }),
+    }))
+  const neverCount = heat.filter((h) => h.count === 0).length
+
+  const insightCards: InsightCard[] =
+    hotItems.length || staleItems.length
+      ? [
+          ...(hotItems.length
+            ? [{ kind: 'hot' as const, label: t('dishes.insights.hot'), items: hotItems }]
+            : []),
+          ...(staleItems.length
+            ? [{ kind: 'stale' as const, label: t('dishes.insights.stale'), items: staleItems }]
+            : []),
+          ...(neverCount > 0
+            ? [
+                {
+                  kind: 'never' as const,
+                  label: t('dishes.insights.never'),
+                  items: [{ name: t('dishes.insights.dishes', { n: neverCount }) }],
+                },
+              ]
+            : []),
+        ]
+      : []
+
   return (
     <>
       {/* 外观快捷入口：明暗 + 配色 */}
@@ -78,33 +119,14 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {(() => {
-        const report = latestMonthlyReport()
-        if (!report || (report.meals === 0 && report.orders === 0)) return null
-        return (
-          <div className="mf-raised mf-solid mb-5 p-4">
-            <div className="flex items-baseline justify-between gap-2">
-              <p className="text-sm font-semibold text-ink">
-                {t('report.title', { month: report.month })}
-              </p>
-              <p className="text-xs text-secondary">
-                {t('report.line', {
-                  meals: report.meals,
-                  orders: report.orders,
-                })}
-              </p>
-            </div>
-            {report.topDishes.length > 0 && (
-              <p className="mt-1.5 truncate text-xs text-secondary">
-                {t('report.top')}：
-                {report.topDishes
-                  .map((d) => `${d.name} ${d.count}`)
-                  .join(' · ')}
-              </p>
-            )}
-          </div>
-        )
-      })()}
+      {insightCards.length > 0 && (
+        <section className="mb-6">
+          <h2 className="mf-section mb-2.5 text-[15px] text-ink">
+            {t('home.insights')}
+          </h2>
+          <DishInsights cards={insightCards} />
+        </section>
+      )}
 
       <div className="mb-3 flex items-center justify-between">
         <h2 className="mf-section text-[15px] text-ink">{t('home.upcoming')}</h2>

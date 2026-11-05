@@ -5,7 +5,6 @@ import { meals, mealSchedules } from '@/lib/db/schema'
 import { getSettings } from '@/lib/settings'
 import { dayjs, localDateTimeToSec, nowSec } from '@/lib/time'
 import { maybeRunDailyBackup } from '@/lib/backup'
-import { ensureMonthlyReports } from '@/lib/reports'
 
 // 用餐时间过后多久自动标记「已完成」
 const DONE_AFTER_SEC = 4 * 3600
@@ -112,11 +111,6 @@ export async function startScheduler() {
     }
     // 每天最多生成一份数据备份（保留最近 5 份）
     void maybeRunDailyBackup().catch((e) => console.error('[backup]', e))
-    try {
-      ensureMonthlyReports()
-    } catch (e) {
-      console.error('[report]', e)
-    }
   })
   // 启动时先跑一次，补齐停机期间错过的饭局
   try {
