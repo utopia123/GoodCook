@@ -89,7 +89,6 @@ export function SettingsList({
             </IconChip>
           }
           title={t('bili.title')}
-          subtitle={t('bili.hint')}
           trailing={<BiliRegionPicker />}
           chevron={false}
         />

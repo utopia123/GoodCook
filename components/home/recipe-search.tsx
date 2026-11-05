@@ -34,10 +34,10 @@ function subscribeBili(cb: () => void) {
 }
 
 /**
- * 先尝试唤起 App，2 秒内未离开当前页则回退到网页。
- * 回退用同页跳转（window.open 在定时器里会被浏览器拦截）。
+ * 依次尝试多个 App scheme；全部失败才回退网页（同页跳转，避免弹窗拦截）。
+ * 页面一旦隐藏/失焦即视为唤起成功，停止后续尝试。
  */
-function openAppWithFallback(scheme: string, webUrl: string) {
+function openAppWithFallback(schemes: string[], webUrl: string) {
   const ua = navigator.userAgent.toLowerCase()
   const mobile = /iphone|ipad|ipod|android/.test(ua)
   if (!mobile) {
@@ -53,24 +53,35 @@ function openAppWithFallback(scheme: string, webUrl: string) {
   window.addEventListener('blur', markLeft)
   window.addEventListener('pagehide', markLeft)
 
-  window.location.href = scheme
-
-  window.setTimeout(() => {
+  const cleanup = () => {
     document.removeEventListener('visibilitychange', markLeft)
     window.removeEventListener('blur', markLeft)
     window.removeEventListener('pagehide', markLeft)
-    const stillHere =
-      !left && document.visibilityState === 'visible' && document.hasFocus()
-    if (stillHere) window.location.href = webUrl
-  }, 2000)
+  }
+
+  let index = 0
+  const attempt = () => {
+    if (left || document.visibilityState === 'hidden') {
+      cleanup()
+      return
+    }
+    if (index >= schemes.length) {
+      cleanup()
+      window.location.href = webUrl
+      return
+    }
+    window.location.href = schemes[index++]
+    window.setTimeout(attempt, 1300)
+  }
+  attempt()
 }
 
-function biliAppScheme(region: Exclude<BiliRegion, ''>, q: string) {
+function biliSchemes(region: Exclude<BiliRegion, ''>, q: string) {
   const kw = encodeURIComponent(`${q} 菜谱`)
-  // 国内版 B 站 App 的搜索深链；国际版 App（com.bstar.intl）用 bstar 前缀
-  return region === 'global'
-    ? `bstar://search?keyword=${kw}`
-    : `bilibili://search?keyword=${kw}`
+  // 国内版：bilibili:// 官方支持搜索深链
+  if (region === 'cn') return [`bilibili://search?keyword=${kw}`]
+  // 国际版：无公开搜索深链，按可能的前缀依次尝试，最后回退网页
+  return [`bstar://search?keyword=${kw}`, `bilibili://search?keyword=${kw}`]
 }
 
 function biliUrl(region: Exclude<BiliRegion, ''>, q: string) {
@@ -137,13 +148,15 @@ export function RecipeSearch() {
         setBiliAsk(true)
         return
       }
-      openAppWithFallback(biliAppScheme(biliRegion, kw), biliUrl(biliRegion, kw))
+      openAppWithFallback(biliSchemes(biliRegion, kw), biliUrl(biliRegion, kw))
       return
     }
 
     if (platform === 'xhs') {
       openAppWithFallback(
-        `xhsdiscover://search/result?keyword=${encodeURIComponent(`${kw} 菜谱`)}`,
+        [
+          `xhsdiscover://search/result?keyword=${encodeURIComponent(`${kw} 菜谱`)}`,
+        ],
         urlFor('xhs', kw),
       )
       return
@@ -210,7 +223,7 @@ export function RecipeSearch() {
                   localStorage.setItem(BILI_KEY, r)
                   window.dispatchEvent(new Event('goodcook-bili'))
                   setBiliAsk(false)
-                  openAppWithFallback(biliAppScheme(r, pendingKw), biliUrl(r, pendingKw))
+                  openAppWithFallback(biliSchemes(r, pendingKw), biliUrl(r, pendingKw))
                 }}
                 className="h-9 rounded-lg border border-[var(--mf-glass-border)] text-[13px] text-ink"
               >
