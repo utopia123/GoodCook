@@ -35,7 +35,8 @@ function urlFor(platform: Platform, q: string) {
     return `https://search.bilibili.com/all?keyword=${encodeURIComponent(`${q} 菜谱`)}`
   }
   if (platform === 'xhs') {
-    return `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(`${q} 菜谱`)}`
+    // 小红书网页版搜索未登录会 404，改用 Bing 站内检索，稳定可达
+    return `https://www.bing.com/search?q=${encodeURIComponent(`site:xiaohongshu.com ${q} 菜谱`)}`
   }
   return `https://www.bing.com/search?q=${encodeURIComponent(`${q} 菜谱做法`)}`
 }
@@ -63,12 +64,12 @@ export function RecipeSearch() {
   }
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 rounded-2xl border border-[var(--mf-glass-border)] bg-[var(--mf-surface)] p-3 shadow-[0_8px_22px_rgb(var(--mf-shadow)/0.12)]">
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-accent" />
           <Input
-            className="pl-9"
+            className="h-12 pl-10 text-[15px] font-medium"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => {
@@ -82,25 +83,22 @@ export function RecipeSearch() {
           type="button"
           onClick={search}
           disabled={!q.trim()}
-          className="mf-accent-fill h-11 shrink-0 rounded-xl px-4 text-sm font-semibold text-white disabled:opacity-40"
+          className="mf-accent-fill h-12 shrink-0 rounded-xl px-5 text-[15px] font-semibold text-white shadow-[0_6px_16px_rgb(var(--mf-shadow)/0.28)] transition-transform active:scale-[0.97] disabled:opacity-40"
         >
           {t('search.go')}
         </button>
       </div>
 
-      <div className="mt-2 flex items-center gap-2">
-        <span className="text-[11px] font-medium text-secondary">
-          {t('search.platform')}
-        </span>
+      <div className="mt-2.5 grid grid-cols-3 gap-2">
         {PLATFORMS.map((p) => (
           <button
             key={p.id}
             type="button"
             onClick={() => setPlatform(p.id)}
             className={cn(
-              'rounded-full border px-2.5 py-1 text-[11px] transition-colors',
+              'h-10 rounded-xl border text-[13px] transition-colors',
               platform === p.id
-                ? 'border-accent/40 bg-accent/15 font-semibold text-accent'
+                ? 'border-accent bg-accent font-semibold text-white shadow-[0_4px_12px_rgb(var(--mf-shadow)/0.2)]'
                 : 'border-[var(--mf-glass-border)] text-secondary hover:text-ink',
             )}
           >
