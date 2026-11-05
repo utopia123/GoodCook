@@ -33,6 +33,46 @@ function subscribeBili(cb: () => void) {
   }
 }
 
+/**
+ * 先尝试唤起 App，2 秒内未离开当前页则回退到网页。
+ * 回退用同页跳转（window.open 在定时器里会被浏览器拦截）。
+ */
+function openAppWithFallback(scheme: string, webUrl: string) {
+  const ua = navigator.userAgent.toLowerCase()
+  const mobile = /iphone|ipad|ipod|android/.test(ua)
+  if (!mobile) {
+    window.open(webUrl, '_blank', 'noopener,noreferrer')
+    return
+  }
+
+  let left = false
+  const markLeft = () => {
+    left = true
+  }
+  document.addEventListener('visibilitychange', markLeft)
+  window.addEventListener('blur', markLeft)
+  window.addEventListener('pagehide', markLeft)
+
+  window.location.href = scheme
+
+  window.setTimeout(() => {
+    document.removeEventListener('visibilitychange', markLeft)
+    window.removeEventListener('blur', markLeft)
+    window.removeEventListener('pagehide', markLeft)
+    const stillHere =
+      !left && document.visibilityState === 'visible' && document.hasFocus()
+    if (stillHere) window.location.href = webUrl
+  }, 2000)
+}
+
+function biliAppScheme(region: Exclude<BiliRegion, ''>, q: string) {
+  const kw = encodeURIComponent(`${q} 菜谱`)
+  // 国内版 B 站 App 的搜索深链；国际版 App（com.bstar.intl）用 bstar 前缀
+  return region === 'global'
+    ? `bstar://search?keyword=${kw}`
+    : `bilibili://search?keyword=${kw}`
+}
+
 function biliUrl(region: Exclude<BiliRegion, ''>, q: string) {
   const kw = encodeURIComponent(`${q} 菜谱`)
   return region === 'global'
@@ -97,61 +137,19 @@ export function RecipeSearch() {
         setBiliAsk(true)
         return
       }
-      window.open(biliUrl(biliRegion, kw), '_blank', 'noopener,noreferrer')
+      openAppWithFallback(biliAppScheme(biliRegion, kw), biliUrl(biliRegion, kw))
       return
     }
 
-    if (platform !== 'xhs') {
-      window.open(urlFor(platform, kw, biliRegion), '_blank', 'noopener,noreferrer')
+    if (platform === 'xhs') {
+      openAppWithFallback(
+        `xhsdiscover://search/result?keyword=${encodeURIComponent(`${kw} 菜谱`)}`,
+        urlFor('xhs', kw),
+      )
       return
     }
 
-    const fallback = urlFor('xhs', kw)
-    const ua = navigator.userAgent.toLowerCase()
-    const mobile = /iphone|ipad|ipod|android/.test(ua)
-
-    // 桌面端没有 App，直接走网页检索
-    if (!mobile) {
-      window.open(fallback, '_blank', 'noopener,noreferrer')
-      return
-    }
-
-    // 先在同一次点击里占位开窗（否则 setTimeout 内的 window.open 会被拦截）
-    const placeholder = window.open('about:blank', '_blank')
-
-    let leftPage = false
-    const markLeft = () => {
-      leftPage = true
-    }
-    document.addEventListener('visibilitychange', markLeft)
-    window.addEventListener('blur', markLeft)
-    window.addEventListener('pagehide', markLeft)
-
-    // 尝试唤起小红书 App 的搜索页
-    window.location.href = `xhsdiscover://search/result?keyword=${encodeURIComponent(
-      `${kw} 菜谱`,
-    )}`
-
-    // 2.4s 后：页面仍在前台且未失焦 → 未安装，用占位窗口打开 Bing；否则关掉占位窗口
-    window.setTimeout(() => {
-      document.removeEventListener('visibilitychange', markLeft)
-      window.removeEventListener('blur', markLeft)
-      window.removeEventListener('pagehide', markLeft)
-      const stillHere =
-        !leftPage &&
-        document.visibilityState === 'visible' &&
-        document.hasFocus()
-      if (stillHere) {
-        if (placeholder) placeholder.location.replace(fallback)
-        else window.location.href = fallback
-      } else {
-        try {
-          placeholder?.close()
-        } catch {
-          // 忽略：窗口可能已被系统接管
-        }
-      }
-    }, 2400)
+    window.open(urlFor(platform, kw, biliRegion), '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -212,7 +210,7 @@ export function RecipeSearch() {
                   localStorage.setItem(BILI_KEY, r)
                   window.dispatchEvent(new Event('goodcook-bili'))
                   setBiliAsk(false)
-                  window.open(biliUrl(r, pendingKw), '_blank', 'noopener,noreferrer')
+                  openAppWithFallback(biliAppScheme(r, pendingKw), biliUrl(r, pendingKw))
                 }}
                 className="h-9 rounded-lg border border-[var(--mf-glass-border)] text-[13px] text-ink"
               >
