@@ -40,7 +40,7 @@
 - 🧂 **Pantry** — aromatics / spices / seasonings sections with effect, best pairings and what to avoid (51 common items preloaded)
 - 📖 **Recipes** — your own recipes (ingredients + steps + time + difficulty), 10 popular dishes preloaded
 - 📊 **Dish insights** — most ordered / not had lately (≥14 days) / never ordered, shown on home, horizontally scrollable on phones, rows configurable in Me (3/5/8)
-- 🍽️ **Ordering hints** — see "hot" and "not had lately" while picking dishes
+- 🍽️ **Smarter ordering** — search dishes; "hot" and "not had lately" appear as thumbnail cards you can open and add directly
 - 💾 **Daily automatic backups** — database + images + secrets, scheduled and rotated
 - 🚫 Removed the contribution-wall module
 
