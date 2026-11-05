@@ -53,10 +53,10 @@ export default async function RecipesPage() {
                 type="button"
                 className="mf-raised mf-pressable w-full p-4 text-left"
               >
-                <h3 className="truncate text-[15px] font-semibold text-ink">
+                <h3 className="truncate text-base font-semibold text-ink">
                   {r.title}
                 </h3>
-                <p className="mt-1 flex items-center gap-2 text-xs text-secondary">
+                <p className="mt-1.5 flex items-center gap-2 text-[13px] text-secondary">
                   {r.minutes ? (
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
@@ -66,7 +66,7 @@ export default async function RecipesPage() {
                   <span>{t(`recipes.diff.${r.difficulty}`)}</span>
                 </p>
                 {r.ingredients && (
-                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-secondary">
+                  <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-secondary">
                     {r.ingredients.replace(/\n/g, ' · ')}
                   </p>
                 )}

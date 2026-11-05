@@ -68,16 +68,16 @@ export default async function CondimentsPage() {
                         type="button"
                         className="mf-raised mf-solid mf-pressable w-full p-3.5 text-left"
                       >
-                        <span className="block truncate text-[15px] font-semibold tracking-[-0.01em] text-ink">
+                        <span className="block truncate text-base font-semibold tracking-[-0.01em] text-ink">
                           {c.name}
                         </span>
                         {c.effect && (
-                          <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-secondary">
+                          <span className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-secondary">
                             {c.effect}
                           </span>
                         )}
                         {(c.goodWith || c.avoidWith) && (
-                          <span className="mt-2 block space-y-0.5 text-[11px] leading-relaxed">
+                          <span className="mt-2 block space-y-1 text-xs leading-relaxed">
                             {c.goodWith && (
                               <span className="flex gap-1.5">
                                 <span className="shrink-0 font-medium text-accent">

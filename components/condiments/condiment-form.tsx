@@ -127,7 +127,7 @@ export function CondimentForm({
               placeholder={t('condiments.effectPh')}
               value={effect}
               maxLength={200}
-              className="min-h-[64px]"
+              className="min-h-[64px] text-[15px] leading-relaxed"
               onChange={(e) => setEffect(e.target.value)}
             />
           </div>
@@ -139,7 +139,7 @@ export function CondimentForm({
               placeholder={t('condiments.goodWithPh')}
               value={goodWith}
               maxLength={200}
-              className="min-h-[64px]"
+              className="min-h-[64px] text-[15px] leading-relaxed"
               onChange={(e) => setGoodWith(e.target.value)}
             />
           </div>
@@ -151,7 +151,7 @@ export function CondimentForm({
               placeholder={t('condiments.avoidWithPh')}
               value={avoidWith}
               maxLength={200}
-              className="min-h-[64px]"
+              className="min-h-[64px] text-[15px] leading-relaxed"
               onChange={(e) => setAvoidWith(e.target.value)}
             />
           </div>

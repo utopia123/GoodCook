@@ -142,7 +142,7 @@ export function RecipeForm({
               id="rec-ing"
               placeholder={t('recipes.ingredientsPh')}
               value={ingredients}
-              className="min-h-[96px]"
+              className="min-h-[96px] text-[15px] leading-relaxed"
               onChange={(e) => setIngredients(e.target.value)}
             />
           </div>
@@ -153,7 +153,7 @@ export function RecipeForm({
               id="rec-steps"
               placeholder={t('recipes.stepsPh')}
               value={steps}
-              className="min-h-[140px]"
+              className="min-h-[140px] text-[15px] leading-relaxed"
               onChange={(e) => setSteps(e.target.value)}
             />
           </div>
