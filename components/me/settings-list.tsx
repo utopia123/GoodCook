@@ -7,7 +7,6 @@ import {
   Settings,
   LogOut,
   Palette,
-  Paintbrush,
   Type,
   ListOrdered,
   Sparkles,
@@ -17,8 +16,7 @@ import { List, Row } from '@/components/ui/list'
 import { IconChip } from '@/components/ui/icon-chip'
 import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { PalettePicker } from '@/components/me/palette-picker'
-import { SkinPicker } from '@/components/me/skin-picker'
+import { ThemeComposer } from '@/components/theme-composer'
 import { NavAlphaSlider } from '@/components/me/nav-alpha'
 import { UiScalePicker } from '@/components/me/ui-scale'
 import { InsightCountPicker } from '@/components/me/insight-count'
@@ -56,8 +54,19 @@ export function SettingsList({
               <Sparkles />
             </IconChip>
           }
-          title={t('skin.title')}
-          trailing={<SkinPicker />}
+          title={t('theme.composer')}
+          subtitle={t('theme.composerHint')}
+          trailing={<ThemeComposer />}
+          chevron={false}
+        />
+        <Row
+          leading={
+            <IconChip>
+              <Palette />
+            </IconChip>
+          }
+          title={t('theme.title')}
+          trailing={<ThemeToggle />}
           chevron={false}
         />
         <Row
@@ -69,26 +78,6 @@ export function SettingsList({
           title={t('nav.alpha')}
           subtitle={t('nav.alphaHint')}
           trailing={<NavAlphaSlider />}
-          chevron={false}
-        />
-        <Row
-          leading={
-            <IconChip>
-              <Paintbrush />
-            </IconChip>
-          }
-          title={t('palette.title')}
-          trailing={<PalettePicker />}
-          chevron={false}
-        />
-        <Row
-          leading={
-            <IconChip>
-              <Palette />
-            </IconChip>
-          }
-          title={t('theme.title')}
-          trailing={<ThemeToggle />}
           chevron={false}
         />
         <Row

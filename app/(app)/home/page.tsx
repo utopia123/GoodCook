@@ -12,9 +12,8 @@ import { Card } from '@/components/ui/card'
 import { MealCard } from '@/components/meals/meal-card'
 import { CreateMealDialog } from '@/components/meals/create-meal-dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { PalettePicker } from '@/components/me/palette-picker'
 import { RecipeSearch } from '@/components/home/recipe-search'
-import { SkinPicker } from '@/components/me/skin-picker'
+import { ThemeComposer } from '@/components/theme-composer'
 import { getInsightCount } from '@/lib/settings'
 import { dishHeat } from '@/lib/insights'
 import { DishInsights, type InsightCard } from '@/components/dishes/dish-insights'
@@ -102,10 +101,9 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 外观快捷入口：明暗 + 配色 + 风格 */}
-      <div className="mb-3 flex flex-wrap items-center justify-end gap-2">
-        <SkinPicker />
-        <PalettePicker />
+      {/* 外观：主题 + 明暗 */}
+      <div className="mb-3 flex items-center justify-end gap-2">
+        <ThemeComposer />
         <ThemeToggle />
       </div>
 
