@@ -106,6 +106,12 @@ export function RecipeSearch() {
           </button>
         ))}
       </div>
+
+      {platform === 'xhs' && (
+        <p className="mt-2 text-[11px] leading-relaxed text-secondary">
+          {t('search.xhsHint')}
+        </p>
+      )}
     </div>
   )
 }
