@@ -6,6 +6,8 @@
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME !== 'nodejs') return
+  // 构建阶段跳过：避免「收集页面数据」与迁移同时写库导致 database is locked
+  if (process.env.NEXT_PHASE === 'phase-production-build') return
 
   const { runMigrations } = await import('@/lib/db/run-migrations')
   try {

@@ -1,3 +1,6 @@
+// 依赖数据库与登录态，禁止构建期预渲染
+export const dynamic = 'force-dynamic'
+
 import { NextResponse } from 'next/server'
 import { tick } from '@/lib/scheduler'
 import { CRON_SECRET } from '@/lib/env'
