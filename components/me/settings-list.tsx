@@ -11,7 +11,6 @@ import {
   ListOrdered,
   Sparkles,
   PanelBottom,
-  Clapperboard,
 } from 'lucide-react'
 import { List, Row } from '@/components/ui/list'
 import { IconChip } from '@/components/ui/icon-chip'
@@ -19,7 +18,6 @@ import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ThemeComposer } from '@/components/theme-composer'
 import { NavAlphaSlider } from '@/components/me/nav-alpha'
-import { BiliRegionPicker } from '@/components/me/bili-region'
 import { UiScalePicker } from '@/components/me/ui-scale'
 import { InsightCountPicker } from '@/components/me/insight-count'
 import { ChangePassword } from '@/components/me/change-password'
@@ -80,16 +78,6 @@ export function SettingsList({
           title={t('nav.alpha')}
           subtitle={t('nav.alphaHint')}
           trailing={<NavAlphaSlider />}
-          chevron={false}
-        />
-        <Row
-          leading={
-            <IconChip>
-              <Clapperboard />
-            </IconChip>
-          }
-          title={t('bili.title')}
-          trailing={<BiliRegionPicker />}
           chevron={false}
         />
         <Row

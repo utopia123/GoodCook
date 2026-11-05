@@ -15,21 +15,18 @@ const PLATFORMS: { id: Platform; labelKey: string }[] = [
 ]
 
 const KEY = 'goodcook-search-platform'
-const BILI_KEY = 'goodcook-bili-region'
 
-type BiliRegion = '' | 'cn' | 'global'
-
-function readBiliRegion(): BiliRegion {
-  const v = localStorage.getItem(BILI_KEY)
-  return v === 'cn' || v === 'global' ? v : ''
+function readPlatform(): Platform {
+  const v = localStorage.getItem(KEY)
+  return v === 'bili' || v === 'xhs' ? v : 'bing'
 }
 
-function subscribeBili(cb: () => void) {
+function subscribePlatform(cb: () => void) {
   window.addEventListener('storage', cb)
-  window.addEventListener('goodcook-bili', cb)
+  window.addEventListener('goodcook-platform', cb)
   return () => {
     window.removeEventListener('storage', cb)
-    window.removeEventListener('goodcook-bili', cb)
+    window.removeEventListener('goodcook-platform', cb)
   }
 }
 
@@ -76,38 +73,13 @@ function openAppWithFallback(schemes: string[], webUrl: string) {
   attempt()
 }
 
-function biliSchemes(region: Exclude<BiliRegion, ''>, q: string) {
-  const kw = encodeURIComponent(`${q} 菜谱`)
-  // 国内版：bilibili:// 官方支持搜索深链
-  if (region === 'cn') return [`bilibili://search?keyword=${kw}`]
-  // 国际版：无公开搜索深链，按可能的前缀依次尝试，最后回退网页
-  return [`bstar://search?keyword=${kw}`, `bilibili://search?keyword=${kw}`]
+function biliScheme(q: string) {
+  return `bilibili://search?keyword=${encodeURIComponent(`${q} 菜谱`)}`
 }
 
-function biliUrl(region: Exclude<BiliRegion, ''>, q: string) {
-  const kw = encodeURIComponent(`${q} 菜谱`)
-  return region === 'global'
-    ? `https://www.bilibili.tv/en/search-result?q=${kw}`
-    : `https://search.bilibili.com/all?keyword=${kw}`
-}
-
-function readPlatform(): Platform {
-  const v = localStorage.getItem(KEY)
-  return v === 'bili' || v === 'xhs' ? v : 'bing'
-}
-
-function subscribePlatform(cb: () => void) {
-  window.addEventListener('storage', cb)
-  window.addEventListener('goodcook-platform', cb)
-  return () => {
-    window.removeEventListener('storage', cb)
-    window.removeEventListener('goodcook-platform', cb)
-  }
-}
-
-function urlFor(platform: Platform, q: string, bili: BiliRegion = 'cn') {
+function urlFor(platform: Platform, q: string) {
   if (platform === 'bili') {
-    return biliUrl(bili === 'global' ? 'global' : 'cn', q)
+    return `https://search.bilibili.com/all?keyword=${encodeURIComponent(`${q} 菜谱`)}`
   }
   if (platform === 'xhs') {
     // 小红书网页版搜索未登录会 404，改用 Bing 站内检索，稳定可达
@@ -120,13 +92,6 @@ function urlFor(platform: Platform, q: string, bili: BiliRegion = 'cn') {
 export function RecipeSearch() {
   const t = useT()
   const [q, setQ] = useState('')
-  const [biliAsk, setBiliAsk] = useState(false)
-  const [pendingKw, setPendingKw] = useState('')
-  const biliRegion = useSyncExternalStore(
-    subscribeBili,
-    readBiliRegion,
-    () => '' as BiliRegion,
-  )
   // 平台偏好从 localStorage 读取；避免在 effect 中同步 setState
   const platform = useSyncExternalStore(
     subscribePlatform,
@@ -143,12 +108,7 @@ export function RecipeSearch() {
     const kw = q.trim()
     if (!kw) return
     if (platform === 'bili') {
-      if (!biliRegion) {
-        setPendingKw(kw)
-        setBiliAsk(true)
-        return
-      }
-      openAppWithFallback(biliSchemes(biliRegion, kw), biliUrl(biliRegion, kw))
+      openAppWithFallback([biliScheme(kw)], urlFor('bili', kw))
       return
     }
 
@@ -162,7 +122,7 @@ export function RecipeSearch() {
       return
     }
 
-    window.open(urlFor(platform, kw, biliRegion), '_blank', 'noopener,noreferrer')
+    window.open(urlFor(platform, kw), '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -208,31 +168,6 @@ export function RecipeSearch() {
           </button>
         ))}
       </div>
-
-      {biliAsk && platform === 'bili' && pendingKw && (
-        <div className="mt-2.5 rounded-xl border border-[var(--mf-glass-border)] p-2.5">
-          <p className="mb-2 text-[11px] text-secondary">
-            {t('search.biliAsk')}
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            {(['cn', 'global'] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => {
-                  localStorage.setItem(BILI_KEY, r)
-                  window.dispatchEvent(new Event('goodcook-bili'))
-                  setBiliAsk(false)
-                  openAppWithFallback(biliSchemes(r, pendingKw), biliUrl(r, pendingKw))
-                }}
-                className="h-9 rounded-lg border border-[var(--mf-glass-border)] text-[13px] text-ink"
-              >
-                {t(r === 'cn' ? 'search.biliCn' : 'search.biliGlobal')}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {platform === 'xhs' && (
         <p className="mt-2 text-[11px] leading-relaxed text-secondary">
