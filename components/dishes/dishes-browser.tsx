@@ -169,7 +169,7 @@ export function DishesBrowser({
 
       {/* 底部操作条 */}
       {mode && (
-        <div className="sticky bottom-24 z-30 mt-4 space-y-2.5 rounded-2xl border border-[var(--mf-glass-border)] bg-[var(--mf-glass-strong)] p-3 backdrop-blur-xl lg:bottom-4">
+        <div className="sticky bottom-24 z-30 mt-4 space-y-2.5 rounded-2xl border border-[var(--mf-glass-border)] bg-[var(--mf-surface)] p-3 shadow-[0_10px_28px_rgb(var(--mf-shadow)/0.2)] lg:bottom-4">
           <p className="text-xs font-medium text-secondary">{t('batch.target')}</p>
           <div className="flex flex-wrap gap-2">
             {categories.map((c) => (

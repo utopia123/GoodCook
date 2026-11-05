@@ -29,7 +29,7 @@ export function BottomNav() {
   const t = useT()
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[calc(env(safe-area-inset-bottom)+12px)] lg:hidden">
-      <div className="mf-trough pointer-events-auto flex items-center gap-1 p-1.5 shadow-[0_4px_18px_rgba(56,71,60,0.16)]">
+      <div className="mf-nav pointer-events-auto flex items-center gap-1 p-1.5">
         {NAV_TABS.map((tab) => {
           const active =
             pathname === tab.href || pathname.startsWith(tab.href + '/')
@@ -39,7 +39,7 @@ export function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={cn(
-                'relative flex h-12 w-[50px] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium',
+                'relative flex h-12 w-[50px] flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-full text-[11px] font-medium',
                 active ? 'text-accent' : 'text-secondary',
               )}
             >
