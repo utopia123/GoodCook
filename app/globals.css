@@ -554,7 +554,11 @@ html.dark .mf-trough {
 .mf-nav {
   /* 底部导航：轻微透明 + 模糊，兼顾可读与质感 */
   background: var(--mf-surface);
-  background: color-mix(in srgb, var(--mf-surface) 88%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--mf-surface) var(--mf-nav-alpha, 88%),
+    transparent
+  );
   -webkit-backdrop-filter: blur(16px) saturate(1.35);
   backdrop-filter: blur(16px) saturate(1.35);
   border: 1px solid var(--mf-glass-border);
@@ -565,9 +569,7 @@ html.dark .mf-trough {
 }
 
 html[data-skin='pixel'] .mf-nav {
-  /* 像素风格：更实一些，保留硬度 */
-  background: var(--mf-surface);
-  background: color-mix(in srgb, var(--mf-surface) 94%, transparent);
+  /* 像素风格：保留硬边框 */
   border-width: 2px;
   border-radius: 10px;
   box-shadow: 3px 3px 0 var(--mf-glass-border);
@@ -581,7 +583,11 @@ html[data-skin='pixel'] .mf-nav {
 html.dark .mf-nav {
   /* 底部导航：轻微透明 + 模糊，兼顾可读与质感 */
   background: var(--mf-surface);
-  background: color-mix(in srgb, var(--mf-surface) 88%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--mf-surface) var(--mf-nav-alpha, 88%),
+    transparent
+  );
   -webkit-backdrop-filter: blur(16px) saturate(1.35);
   backdrop-filter: blur(16px) saturate(1.35);
   border: 1px solid var(--mf-glass-border);
@@ -592,9 +598,7 @@ html.dark .mf-nav {
 }
 
 html[data-skin='pixel'] .mf-nav {
-  /* 像素风格：更实一些，保留硬度 */
-  background: var(--mf-surface);
-  background: color-mix(in srgb, var(--mf-surface) 94%, transparent);
+  /* 像素风格：保留硬边框 */
   border-width: 2px;
   border-radius: 10px;
   box-shadow: 3px 3px 0 var(--mf-glass-border);

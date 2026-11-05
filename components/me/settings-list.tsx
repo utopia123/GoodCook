@@ -11,6 +11,7 @@ import {
   Type,
   ListOrdered,
   Sparkles,
+  PanelBottom,
 } from 'lucide-react'
 import { List, Row } from '@/components/ui/list'
 import { IconChip } from '@/components/ui/icon-chip'
@@ -18,6 +19,7 @@ import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { PalettePicker } from '@/components/me/palette-picker'
 import { SkinPicker } from '@/components/me/skin-picker'
+import { NavAlphaSlider } from '@/components/me/nav-alpha'
 import { UiScalePicker } from '@/components/me/ui-scale'
 import { InsightCountPicker } from '@/components/me/insight-count'
 import { ChangePassword } from '@/components/me/change-password'
@@ -56,6 +58,17 @@ export function SettingsList({
           }
           title={t('skin.title')}
           trailing={<SkinPicker />}
+          chevron={false}
+        />
+        <Row
+          leading={
+            <IconChip>
+              <PanelBottom />
+            </IconChip>
+          }
+          title={t('nav.alpha')}
+          subtitle={t('nav.alphaHint')}
+          trailing={<NavAlphaSlider />}
           chevron={false}
         />
         <Row

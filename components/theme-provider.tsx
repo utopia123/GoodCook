@@ -17,6 +17,7 @@ const THEME_KEY = 'goodcook-theme'
 const PALETTE_KEY = 'goodcook-palette'
 const SCALE_KEY = 'goodcook-scale'
 const SKIN_KEY = 'goodcook-skin'
+const NAV_ALPHA_KEY = 'goodcook-nav-alpha'
 const SCALE_VALUE: Record<UiScale, string> = { sm: '0.92', md: '', lg: '1.08' }
 
 function applyTheme(theme: Theme) {
@@ -38,6 +39,10 @@ function applyPalette(palette: Palette) {
   document.documentElement.dataset.theme = palette
 }
 
+function applyNavAlpha(alpha: number) {
+  document.documentElement.style.setProperty('--mf-nav-alpha', `${alpha}%`)
+}
+
 function applySkin(skin: Skin) {
   if (skin === 'classic') delete document.documentElement.dataset.skin
   else document.documentElement.dataset.skin = skin
@@ -53,19 +58,23 @@ const ThemeCtx = createContext<{
   palette: Palette
   scale: UiScale
   skin: Skin
+  navAlpha: number
   setTheme: (t: Theme) => void
   setPalette: (p: Palette) => void
   setScale: (s: UiScale) => void
   setSkin: (s: Skin) => void
+  setNavAlpha: (n: number) => void
 }>({
   theme: 'system',
   palette: 'green',
   scale: 'md',
   skin: 'classic',
+  navAlpha: 88,
   setTheme: () => {},
   setPalette: () => {},
   setScale: () => {},
   setSkin: () => {},
+  setNavAlpha: () => {},
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -73,6 +82,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [palette, setPaletteState] = useState<Palette>('green')
   const [scale, setScaleState] = useState<UiScale>('md')
   const [skin, setSkinState] = useState<Skin>('classic')
+  const [navAlpha, setNavAlphaState] = useState(88)
 
   useEffect(() => {
     const savedTheme = (localStorage.getItem(THEME_KEY) as Theme) || 'system'
@@ -93,6 +103,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const savedSkin = (localStorage.getItem(SKIN_KEY) as Skin) || 'classic'
     setSkinState(savedSkin)
     applySkin(savedSkin)
+
+    const savedAlpha = Number(localStorage.getItem(NAV_ALPHA_KEY) ?? '88')
+    const alpha = Number.isFinite(savedAlpha)
+      ? Math.min(100, Math.max(60, savedAlpha))
+      : 88
+    setNavAlphaState(alpha)
+    applyNavAlpha(alpha)
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const onChange = () => {
@@ -147,6 +164,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     applyPalette((localStorage.getItem(PALETTE_KEY) as Palette) || 'green')
   }, [])
 
+  const setNavAlpha = useCallback((n: number) => {
+    const v = Math.min(100, Math.max(60, Math.round(n)))
+    localStorage.setItem(NAV_ALPHA_KEY, String(v))
+    setNavAlphaState(v)
+    applyNavAlpha(v)
+  }, [])
+
   const setScale = useCallback((sc: UiScale) => {
     localStorage.setItem(SCALE_KEY, sc)
     setScaleState(sc)
@@ -155,7 +179,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeCtx.Provider
-      value={{ theme, palette, scale, skin, setTheme, setPalette, setScale, setSkin }}
+      value={{
+        theme,
+        palette,
+        scale,
+        skin,
+        navAlpha,
+        setTheme,
+        setPalette,
+        setScale,
+        setSkin,
+        setNavAlpha,
+      }}
     >
       {children}
     </ThemeCtx.Provider>
