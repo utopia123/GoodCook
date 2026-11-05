@@ -5,6 +5,7 @@ export type Messages = Record<string, string>
 const zh: Messages = {
   'app.name': 'GoodCook',
   // common
+  'common.done': '完成',
   'common.save': '保存',
   'common.saved': '已保存',
   'common.delete': '删除',
@@ -168,6 +169,9 @@ const zh: Messages = {
   'insight.countUnit': '{n} 条',
   'err.invalidValue': '数值不合法',
   'picker.searchDish': '搜索菜品',
+  'picker.filter': '筛选',
+  'picker.filterTitle': '筛选菜品',
+  'picker.clearFilter': '清除筛选',
   'picker.addToMeal': '加入这顿',
   'picker.removeFromMeal': '取消选择',
   'picker.hotShort': '常点',
@@ -379,6 +383,7 @@ const zh: Messages = {
 
 const en: Messages = {
   'app.name': 'GoodCook',
+  'common.done': 'Done',
   'common.save': 'Save',
   'common.saved': 'Saved',
   'common.delete': 'Delete',
@@ -530,6 +535,9 @@ const en: Messages = {
   'insight.countUnit': '{n}',
   'err.invalidValue': 'Invalid value',
   'picker.searchDish': 'Search dishes',
+  'picker.filter': 'Filter',
+  'picker.filterTitle': 'Filter dishes',
+  'picker.clearFilter': 'Clear',
   'picker.addToMeal': 'Add to this meal',
   'picker.removeFromMeal': 'Remove',
   'picker.hotShort': 'Hot',

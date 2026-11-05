@@ -3,7 +3,15 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Check, Clock, Flame, Search, Soup } from 'lucide-react'
+import {
+  Check,
+  Clock,
+  Flame,
+  Search,
+  SlidersHorizontal,
+  Soup,
+  X,
+} from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -39,10 +47,9 @@ export function OrderPicker({
   )
   const [activeTag, setActiveTag] = useState('')
   const [activeCat, setActiveCat] = useState('')
-  const [tagOpen, setTagOpen] = useState(false)
-  const [tagQ, setTagQ] = useState('')
   const [q, setQ] = useState('')
   const [detail, setDetail] = useState<Dish | null>(null)
+  const [filterOpen, setFilterOpen] = useState(false)
   const [, startTransition] = useTransition()
   const [error, setError] = useState('')
 
@@ -54,14 +61,6 @@ export function OrderPicker({
   }
   const sortedTags = [...allTags].sort(
     (a, b) => (tagCount.get(b) ?? 0) - (tagCount.get(a) ?? 0),
-  )
-  const TAG_PREVIEW = 8
-  const previewTags = sortedTags.slice(0, TAG_PREVIEW)
-  const moreTags = sortedTags.slice(TAG_PREVIEW)
-  const sheetTags = (
-    tagQ.trim()
-      ? sortedTags.filter((tg) => tg.toLowerCase().includes(tagQ.trim().toLowerCase()))
-      : sortedTags
   )
   // 只在有菜的分类才展示
   const shownCats = categories.filter((c) =>
@@ -88,11 +87,27 @@ export function OrderPicker({
   const hotSuggest = heat
     .filter((h) => h.count > 0 && dishById.has(h.id))
     .sort((a, b) => b.count - a.count)
-    .slice(0, suggestCount)
+    .slice(0, Math.max(2, Math.round(suggestCount / 2)))
   const staleSuggest = heat
     .filter((h) => (h.daysAgo ?? 0) >= 14 && dishById.has(h.id))
     .sort((a, b) => (b.daysAgo ?? 0) - (a.daysAgo ?? 0))
-    .slice(0, suggestCount)
+    .slice(0, Math.max(2, Math.round(suggestCount / 2)))
+
+  // 合并成一排：常点在前、久未吃在后，去重
+  const seen = new Set<string>()
+  const suggestRow: { h: (typeof heat)[number]; kind: 'hot' | 'stale' }[] = []
+  for (const h of hotSuggest) {
+    if (seen.has(h.id)) continue
+    seen.add(h.id)
+    suggestRow.push({ h, kind: 'hot' })
+  }
+  for (const h of staleSuggest) {
+    if (seen.has(h.id)) continue
+    seen.add(h.id)
+    suggestRow.push({ h, kind: 'stale' })
+  }
+
+  const activeCount = (activeCat ? 1 : 0) + (activeTag ? 1 : 0)
 
   const toggle = (dishId: string) => {
     const next = new Set(selected)
@@ -129,229 +144,206 @@ export function OrderPicker({
 
   return (
     <div>
-      {/* 搜索 */}
-      <div className="relative mb-3">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
-        <Input
-          className="pl-9"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={t('picker.searchDish')}
-        />
-      </div>
-
-      {/* 常点 / 久未吃：横向滑动，点开可查看并选择 */}
-      {!keyword && (hotSuggest.length > 0 || staleSuggest.length > 0) && (
-        <div className="mb-3.5 space-y-2.5">
-          {[
-            {
-              key: 'hot' as const,
-              label: t('picker.hotShort'),
-              icon: <Flame className="h-3.5 w-3.5 text-danger" />,
-              rows: hotSuggest,
-            },
-            {
-              key: 'stale' as const,
-              label: t('picker.staleShort'),
-              icon: <Clock className="h-3.5 w-3.5 text-warn" />,
-              rows: staleSuggest,
-            },
-          ].map((row) =>
-            row.rows.length === 0 ? null : (
-              <div key={row.key}>
-                <p className="mb-1.5 flex items-center gap-1 text-[11px] font-medium text-secondary">
-                  {row.icon}
-                  {row.label}
+      {/* 搜索 + 筛选入口 */}
+      <div className="mb-3 flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
+          <Input
+            className="pl-9"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t('picker.searchDish')}
+          />
+        </div>
+        <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="mf-inset flex h-11 shrink-0 items-center gap-1.5 rounded-xl px-3 text-sm text-secondary"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              {t('picker.filter')}
+              {activeCount > 0 && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-strong px-1 text-[10px] font-semibold text-white">
+                  {activeCount}
+                </span>
+              )}
+            </button>
+          </DialogTrigger>
+          <DialogContent title={t('picker.filterTitle')}>
+            <div className="space-y-4">
+              <div>
+                <p className="mb-2 text-xs font-medium text-secondary">
+                  {t('picker.groupCategory')}
                 </p>
-                <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-                  {row.rows.map((h) => {
-                    const d = dishById.get(h.id)
-                    if (!d) return null
-                    const on = selected.has(d.id)
-                    return (
-                      <button
-                        key={h.id}
-                        type="button"
-                        onClick={() => setDetail(d)}
-                        className={cn(
-                          'mf-raised mf-pressable w-[124px] shrink-0 overflow-hidden text-left',
-                          on && 'ring-2 ring-accent',
-                        )}
-                      >
-                        <div className="relative aspect-[4/3] w-full">
-                          {d.imagePath ? (
-                            <Image
-                              src={`/api/uploads/${d.imagePath}`}
-                              alt={d.name}
-                              fill
-                              sizes="124px"
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="mf-img-empty flex h-full w-full items-center justify-center">
-                              <Soup className="h-6 w-6 text-accent/35" />
-                            </div>
-                          )}
-                          {on && (
-                            <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-strong text-white">
-                              <Check className="h-3 w-3" strokeWidth={3} />
-                            </span>
-                          )}
-                        </div>
-                        <div className="relative p-2">
-                          <p className="truncate text-xs font-medium text-ink">
-                            {d.name}
-                          </p>
-                          <p className="mt-0.5 text-[11px] text-secondary">
-                            {row.key === 'hot'
-                              ? t('dishes.insights.times', { n: h.count })
-                              : t('dishes.insights.days', { n: h.daysAgo ?? 0 })}
-                          </p>
-                        </div>
-                      </button>
-                    )
-                  })}
+                <div className="flex flex-wrap gap-2">
+                  <Chip active={!activeCat} onClick={() => setActiveCat('')}>
+                    {t('dishes.all')}
+                  </Chip>
+                  {shownCats.map((c) => (
+                    <Chip
+                      key={c.id}
+                      active={activeCat === c.id}
+                      onClick={() =>
+                        setActiveCat(activeCat === c.id ? '' : c.id)
+                      }
+                    >
+                      {c.name}
+                    </Chip>
+                  ))}
+                  {hasUncategorized && (
+                    <Chip
+                      active={activeCat === 'none'}
+                      onClick={() =>
+                        setActiveCat(activeCat === 'none' ? '' : 'none')
+                      }
+                    >
+                      {t('dishes.uncategorized')}
+                    </Chip>
+                  )}
                 </div>
               </div>
-            ),
+
+              <div>
+                <p className="mb-2 text-xs font-medium text-secondary">
+                  {t('picker.groupTag')}
+                </p>
+                <div className="flex max-h-[38vh] flex-wrap gap-2 overflow-y-auto">
+                  <Chip active={!activeTag} onClick={() => setActiveTag('')}>
+                    {t('dishes.all')}
+                  </Chip>
+                  {sortedTags.map((tag) => (
+                    <Chip
+                      key={tag}
+                      active={activeTag === tag}
+                      onClick={() =>
+                        setActiveTag(activeTag === tag ? '' : tag)
+                      }
+                    >
+                      {tag}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2 border-t border-[var(--mf-glass-border)] pt-3">
+                <Button
+                  variant="trough"
+                  className="flex-1"
+                  onClick={() => {
+                    setActiveCat('')
+                    setActiveTag('')
+                  }}
+                >
+                  {t('picker.clearFilter')}
+                </Button>
+                <Button className="flex-1" onClick={() => setFilterOpen(false)}>
+                  {t('common.done')}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* 已选筛选条件 */}
+      {activeCount > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {activeCat && (
+            <button
+              type="button"
+              onClick={() => setActiveCat('')}
+              className="flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
+            >
+              {activeCat === 'none'
+                ? t('dishes.uncategorized')
+                : (categories.find((c) => c.id === activeCat)?.name ?? '')}
+              <X className="h-3 w-3" />
+            </button>
+          )}
+          {activeTag && (
+            <button
+              type="button"
+              onClick={() => setActiveTag('')}
+              className="flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
+            >
+              {activeTag}
+              <X className="h-3 w-3" />
+            </button>
           )}
         </div>
       )}
 
-      {(shownCats.length > 0 || hasUncategorized) && (
-        <div className="mb-2 flex flex-wrap items-center gap-2">
-          <span className="shrink-0 pr-0.5 text-[11px] font-medium tracking-wide text-secondary">
-            {t('picker.groupCategory')}
-          </span>
-          <button
-            type="button"
-            onClick={() => setActiveCat('')}
-            className={cn(
-              'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
-              !activeCat
-                ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
-                : 'mf-inset text-secondary hover:text-ink',
-            )}
-          >
-            {t('dishes.all')}
-          </button>
-          {shownCats.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setActiveCat(activeCat === cat.id ? '' : cat.id)}
-              className={cn(
-                'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
-                activeCat === cat.id
-                  ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
-                  : 'mf-inset text-secondary hover:text-ink',
-              )}
-            >
-              {cat.name}
-            </button>
-          ))}
-          {hasUncategorized && (
-            <button
-              type="button"
-              onClick={() => setActiveCat(activeCat === 'none' ? '' : 'none')}
-              className={cn(
-                'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
-                activeCat === 'none'
-                  ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
-                  : 'mf-inset text-secondary hover:text-ink',
-              )}
-            >
-              {t('dishes.uncategorized')}
-            </button>
-          )}
-        </div>
-      )}
-      {allTags.length > 0 && (
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="shrink-0 pr-0.5 text-[11px] font-medium tracking-wide text-secondary">
-            {t('picker.groupTag')}
-          </span>
-          <button
-            type="button"
-            onClick={() => setActiveTag('')}
-            className={cn(
-              'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
-              !activeTag
-                ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
-                : 'mf-inset text-secondary hover:text-ink',
-            )}
-          >
-            {t('dishes.all')}
-          </button>
-          {(activeTag && !previewTags.includes(activeTag)
-            ? [activeTag, ...previewTags]
-            : previewTags
-          ).map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => setActiveTag(activeTag === tag ? '' : tag)}
-              className={cn(
-                'shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm',
-                activeTag === tag
-                  ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
-                  : 'mf-inset text-secondary hover:text-ink',
-              )}
-            >
-              <span className="max-w-[9em] truncate">{tag}</span>
-            </button>
-          ))}
-          {moreTags.length > 0 && (
-            <Dialog open={tagOpen} onOpenChange={setTagOpen}>
-              <DialogTrigger asChild>
+      {/* 推荐：常点与久未吃合并为一排 */}
+      {!keyword && suggestRow.length > 0 && (
+        <div className="mb-3">
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+            {suggestRow.map(({ h, kind }) => {
+              const d = dishById.get(h.id)
+              if (!d) return null
+              const on = selected.has(d.id)
+              return (
                 <button
+                  key={`${kind}-${h.id}`}
                   type="button"
-                  className="shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium text-secondary transition-colors mf-inset hover:text-ink sm:px-4 sm:py-2 sm:text-sm"
+                  onClick={() => setDetail(d)}
+                  className={cn(
+                    'mf-raised mf-pressable w-[116px] shrink-0 overflow-hidden text-left',
+                    on && 'ring-2 ring-accent',
+                  )}
                 >
-                  {t('picker.moreTags', { n: moreTags.length })}
-                </button>
-              </DialogTrigger>
-              <DialogContent title={t('picker.moreTagsTitle')}>
-                <div className="space-y-3">
-                  <Input
-                    value={tagQ}
-                    onChange={(e) => setTagQ(e.target.value)}
-                    placeholder={t('picker.searchTag')}
-                  />
-                  <div className="flex max-h-[52vh] flex-wrap gap-2 overflow-y-auto">
-                    {sheetTags.length === 0 && (
-                      <p className="py-6 text-center text-sm text-secondary">
-                        {t('picker.noTag')}
-                      </p>
+                  <div className="relative aspect-[4/3] w-full">
+                    {d.imagePath ? (
+                      <Image
+                        src={`/api/uploads/${d.imagePath}`}
+                        alt={d.name}
+                        fill
+                        sizes="116px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="mf-img-empty flex h-full w-full items-center justify-center">
+                        <Soup className="h-6 w-6 text-accent/35" />
+                      </div>
                     )}
-                    {sheetTags.map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        onClick={() => {
-                          setActiveTag(activeTag === tag ? '' : tag)
-                          setTagOpen(false)
-                        }}
-                        className={cn(
-                          'rounded-full px-3 py-1.5 text-xs transition-colors',
-                          activeTag === tag
-                            ? 'bg-accent/15 font-semibold text-accent ring-1 ring-accent/40'
-                            : 'mf-inset text-secondary hover:text-ink',
-                        )}
-                      >
-                        {tag}
-                        <span className="ml-1 opacity-60">
-                          {tagCount.get(tag) ?? 0}
-                        </span>
-                      </button>
-                    ))}
+                    <span
+                      className={cn(
+                        'absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium text-white',
+                        kind === 'hot' ? 'bg-danger/85' : 'bg-black/45',
+                      )}
+                    >
+                      {kind === 'hot' ? (
+                        <Flame className="h-2.5 w-2.5" />
+                      ) : (
+                        <Clock className="h-2.5 w-2.5" />
+                      )}
+                      {kind === 'hot'
+                        ? t('picker.hotShort')
+                        : t('picker.staleShort')}
+                    </span>
+                    {on && (
+                      <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-strong text-white">
+                        <Check className="h-3 w-3" strokeWidth={3} />
+                      </span>
+                    )}
                   </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
+                  <div className="relative px-2 py-1.5">
+                    <p className="truncate text-xs font-medium text-ink">
+                      {d.name}
+                    </p>
+                    <p className="mt-0.5 text-[10px] text-secondary">
+                      {kind === 'hot'
+                        ? t('dishes.insights.times', { n: h.count })
+                        : t('dishes.insights.days', { n: h.daysAgo ?? 0 })}
+                    </p>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
         </div>
       )}
+
       {visible.length === 0 ? (
         <p className="mf-inset rounded-2xl p-4 text-center text-sm text-secondary">
           {t('picker.noMatch')}
@@ -440,5 +432,30 @@ export function OrderPicker({
         </DialogContent>
       </Dialog>
     </div>
+  )
+}
+
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'rounded-full border px-3 py-1.5 text-[13px] transition-colors',
+        active
+          ? 'border-accent/40 bg-accent/15 font-semibold text-accent'
+          : 'border-[var(--mf-glass-border)] bg-[var(--mf-surface)] text-secondary',
+      )}
+    >
+      {children}
+    </button>
   )
 }
