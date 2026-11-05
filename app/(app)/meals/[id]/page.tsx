@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ChevronLeft, Clock, Timer, ChefHat, Soup, Flame } from 'lucide-react'
+import { ChevronLeft, Clock, Timer, ChefHat, Soup } from 'lucide-react'
 import { asc, eq } from 'drizzle-orm'
 import { db } from '@/lib/db/client'
 import { dishes as dishesTable, dishCategories as dishCategoriesTable } from '@/lib/db/schema'
@@ -48,16 +48,7 @@ export default async function MealDetailPage({
   // 点菜时的参考：常点与久未吃的菜
   const { heat } = dishHeat()
   const insightN = getInsightCount()
-  const hotNames = heat
-    .filter((h) => h.count > 0)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, insightN)
-    .map((h) => h.name)
-  const staleNames = heat
-    .filter((h) => (h.daysAgo ?? 0) >= 14)
-    .sort((a, b) => (b.daysAgo ?? 0) - (a.daysAgo ?? 0))
-    .slice(0, insightN)
-    .map((h) => h.name)
+
 
   const isCook = meal.cookId === me.id
   const canManage = me.isAdmin || meal.createdBy === me.id || isCook
@@ -166,33 +157,13 @@ export default async function MealDetailPage({
             {t('detail.pick')}
             {myIds.length > 0 && t('detail.picked', { n: myIds.length })}
           </h2>
-          {(hotNames.length > 0 || staleNames.length > 0) && (
-            <div className="mb-3 flex flex-wrap gap-2 text-xs">
-              {hotNames.length > 0 && (
-                <span className="mf-inset flex items-center gap-1.5 rounded-full px-3 py-1.5 text-secondary">
-                  <Flame className="h-3.5 w-3.5 text-danger" />
-                  <span className="text-ink">{t('picker.hotShort')}</span>
-                  <span className="max-w-[16em] truncate">
-                    {hotNames.join('、')}
-                  </span>
-                </span>
-              )}
-              {staleNames.length > 0 && (
-                <span className="mf-inset flex items-center gap-1.5 rounded-full px-3 py-1.5 text-secondary">
-                  <Clock className="h-3.5 w-3.5 text-warn" />
-                  <span className="text-ink">{t('picker.staleShort')}</span>
-                  <span className="max-w-[16em] truncate">
-                    {staleNames.join('、')}
-                  </span>
-                </span>
-              )}
-            </div>
-          )}
           <OrderPicker
             mealId={meal.id}
             dishes={activeDishes}
             categories={dishCategories}
             initialSelected={myIds}
+            heat={heat}
+            suggestCount={insightN}
           />
         </section>
       )}

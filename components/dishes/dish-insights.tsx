@@ -31,7 +31,7 @@ export function DishInsights({ cards }: { cards: InsightCard[] }) {
         return (
           <div
             key={card.kind}
-            className="mf-raised mf-solid w-[62vw] max-w-[240px] shrink-0 p-3 sm:w-auto sm:max-w-none"
+            className="mf-raised w-[62vw] max-w-[240px] shrink-0 p-3 sm:w-auto sm:max-w-none"
           >
             <p
               className={cn(
