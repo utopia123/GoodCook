@@ -81,7 +81,7 @@ const zh: Messages = {
   'search.bing': 'Bing',
   'search.bili': 'B站',
   'search.xhs': '小红书',
-  'search.xhsHint': '通过 Bing 检索小红书内容，点开结果后可自行跳转原站。',
+  'search.xhsHint': '手机上装了小红书会直接唤起 App 搜索；未安装则用 Bing 检索小红书内容。',
   'home.insights': '菜品热度',
   'home.upcoming': '临近的饭局',
   'home.emptyUpcoming': '最近几天还没有饭局，开一顿叫上家人点菜吧',
@@ -466,7 +466,7 @@ const en: Messages = {
   'search.bing': 'Bing',
   'search.bili': 'Bilibili',
   'search.xhs': 'RED',
-  'search.xhsHint': 'Searches RED content via Bing; open a result to visit the site.',
+  'search.xhsHint': 'Opens the RED app if installed; otherwise searches RED content via Bing.',
   'home.insights': 'Dish insights',
   'home.upcoming': 'Upcoming meals',
   'home.emptyUpcoming':

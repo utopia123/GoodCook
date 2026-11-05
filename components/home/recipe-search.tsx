@@ -60,11 +60,43 @@ export function RecipeSearch() {
   const search = () => {
     const kw = q.trim()
     if (!kw) return
-    window.open(urlFor(platform, kw), '_blank', 'noopener,noreferrer')
+    if (platform !== 'xhs') {
+      window.open(urlFor(platform, kw), '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    const fallback = urlFor('xhs', kw)
+    const ua = navigator.userAgent.toLowerCase()
+    const mobile = /iphone|ipad|ipod|android/.test(ua)
+
+    // 桌面端没有 App，直接走网页检索
+    if (!mobile) {
+      window.open(fallback, '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    let leftPage = false
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') leftPage = true
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    // 尝试唤起小红书 App 的搜索页
+    window.location.href = `xhsdiscover://search/result?keyword=${encodeURIComponent(
+      `${kw} 菜谱`,
+    )}`
+
+    // 1.2s 后仍在页面 → 视为未安装，回退到 Bing 站内检索
+    window.setTimeout(() => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      if (!leftPage && document.visibilityState === 'visible') {
+        window.open(fallback, '_blank', 'noopener,noreferrer')
+      }
+    }, 1200)
   }
 
   return (
-    <div className="mb-5 rounded-2xl border border-[var(--mf-glass-border)] bg-[var(--mf-surface)] p-3 shadow-[0_8px_22px_rgb(var(--mf-shadow)/0.12)]">
+    <div className="mf-raised mb-5 p-3.5">
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-accent" />
