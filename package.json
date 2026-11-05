@@ -1,6 +1,6 @@
 {
   "name": "goodcook",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "private": true,
   "description": "干饭厨子 GanCook — 可自部署到 NAS 的家庭点菜系统",
   "scripts": {
