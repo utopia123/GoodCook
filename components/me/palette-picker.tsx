@@ -23,7 +23,8 @@ const PALETTES: { id: Palette; dots: string[] }[] = [
 /** 配色方案选择器（我的页设置项） */
 export function PalettePicker() {
   const t = useT()
-  const { palette, setPalette } = useTheme()
+  const { palette, setPalette, skin } = useTheme()
+  const locked = skin !== 'classic'
   const [open, setOpen] = useState(false)
 
   return (
@@ -71,7 +72,7 @@ export function PalettePicker() {
           })}
         </div>
         <p className="mt-3 text-xs leading-relaxed text-secondary">
-          {t('palette.hint')}
+          {locked ? t('palette.lockedBySkin') : t('palette.hint')}
         </p>
         <DialogClose className="sr-only">{t('common.cancel')}</DialogClose>
       </DialogContent>

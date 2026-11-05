@@ -273,6 +273,171 @@ html[data-theme='wine'].dark {
     var(--mf-base);
 }
 
+
+/* ═════════ 风格（材质/主题感） ═════════
+   通过 <html data-skin="..."> 切换，默认 classic 保持现状。
+   风格会覆盖配色变量、圆角与阴影；选择风格时配色选择器置灰。
+   ═════════════════════════════════════ */
+
+/* A1 清玻璃 */
+html[data-skin='glass'] {
+  --radius: 22px;
+  --mf-base: #eef3ef;
+  --mf-surface: #ffffff;
+  --mf-trough: rgba(255, 255, 255, 0.5);
+  --mf-shadow: 40 70 55;
+  --mf-accent: #2f7a48;
+  --mf-accent-strong: #26663b;
+  --mf-accent-soft: 90 180 130;
+  --mf-ink: #16241c;
+  --mf-secondary: #4e5c54;
+  --mf-glass: rgba(255, 255, 255, 0.34);
+  --mf-glass-strong: rgba(255, 255, 255, 0.55);
+  --mf-glass-border: rgba(255, 255, 255, 0.65);
+  --mf-glass-blur: 26px;
+  --mf-page: radial-gradient(900px 600px at 8% -10%, rgb(120 200 160 / 0.55), transparent 60%),
+    radial-gradient(800px 620px at 96% 4%, rgb(150 190 255 / 0.45), transparent 58%),
+    radial-gradient(900px 700px at 50% 118%, rgb(255 235 200 / 0.5), transparent 62%),
+    var(--mf-base);
+}
+html[data-skin='glass'].dark {
+  --mf-base: #10161a;
+  --mf-surface: #1b2429;
+  --mf-trough: rgba(255, 255, 255, 0.06);
+  --mf-accent: #7ac8a0;
+  --mf-accent-strong: #5fb187;
+  --mf-accent-soft: 122 200 160;
+  --mf-ink: #eaf2ee;
+  --mf-secondary: #9cb0a7;
+  --mf-glass: rgba(28, 36, 42, 0.42);
+  --mf-glass-strong: rgba(32, 42, 48, 0.62);
+  --mf-glass-border: rgba(255, 255, 255, 0.16);
+  --mf-page: radial-gradient(900px 600px at 8% -10%, rgb(70 150 120 / 0.35), transparent 60%),
+    radial-gradient(800px 620px at 96% 4%, rgb(60 110 160 / 0.3), transparent 58%),
+    var(--mf-base);
+}
+
+/* C2 黑白团子 */
+html[data-skin='panda'] {
+  --radius: 20px;
+  --mf-base: #eef2f0;
+  --mf-surface: #ffffff;
+  --mf-trough: #f3f6f4;
+  --mf-shadow: 20 30 26;
+  --mf-accent: #14181a;
+  --mf-accent-strong: #14181a;
+  --mf-accent-soft: 108 191 139;
+  --mf-ink: #14181a;
+  --mf-secondary: #64717a;
+  --mf-danger: #c1665f;
+  --mf-glass: rgba(255, 255, 255, 0.82);
+  --mf-glass-strong: rgba(255, 255, 255, 0.94);
+  --mf-glass-border: rgba(20, 24, 26, 0.1);
+  --mf-page: radial-gradient(760px 520px at 16% -8%, rgb(20 24 26 / 0.06), transparent 60%),
+    radial-gradient(700px 520px at 92% 108%, rgb(108 191 139 / 0.18), transparent 62%),
+    var(--mf-base);
+}
+html[data-skin='panda'].dark {
+  --mf-base: #0f1214;
+  --mf-surface: #191d20;
+  --mf-trough: #14181b;
+  --mf-accent: #eef2f0;
+  --mf-accent-strong: #ffffff;
+  --mf-accent-soft: 108 191 139;
+  --mf-ink: #f2f5f3;
+  --mf-secondary: #9aa4a9;
+  --mf-glass: rgba(26, 31, 34, 0.72);
+  --mf-glass-strong: rgba(30, 36, 40, 0.88);
+  --mf-glass-border: rgba(255, 255, 255, 0.1);
+  --mf-page: radial-gradient(700px 520px at 92% 108%, rgb(108 191 139 / 0.14), transparent 62%),
+    var(--mf-base);
+}
+
+/* C1 像素冒险 */
+html[data-skin='pixel'] {
+  --radius: 10px;
+  --mf-base: #bfe7fb;
+  --mf-surface: #fff8ec;
+  --mf-trough: #fff3dd;
+  --mf-shadow: 90 60 30;
+  --mf-accent: #2f9e4f;
+  --mf-accent-strong: #1f7a3a;
+  --mf-accent-soft: 240 180 41;
+  --mf-ink: #2a1a10;
+  --mf-secondary: #6b5138;
+  --mf-danger: #c1442e;
+  --mf-warn: #f0b429;
+  --mf-glass: #fff8ec;
+  --mf-glass-strong: #fffdf7;
+  --mf-glass-border: #7a3b28;
+  --mf-glass-blur: 0px;
+  --mf-page: linear-gradient(180deg, #bfe7fb 0%, #8fd1f7 46%, #a7d98a 46%, #86c56a 100%);
+}
+html[data-skin='pixel'].dark {
+  --mf-base: #1a1410;
+  --mf-surface: #2a211a;
+  --mf-trough: #221a14;
+  --mf-accent: #7cc98a;
+  --mf-accent-strong: #5aa869;
+  --mf-accent-soft: 240 180 41;
+  --mf-ink: #fdf3e0;
+  --mf-secondary: #c0a98a;
+  --mf-glass: #2a211a;
+  --mf-glass-strong: #33281f;
+  --mf-glass-border: #7a3b28;
+  --mf-page: linear-gradient(180deg, #101a24 0%, #16232e 50%, #1a2a1c 50%, #16241a 100%);
+}
+
+/* B4 纸质手账 */
+html[data-skin='paper'] {
+  --radius: 16px;
+  --mf-base: #fbf7ee;
+  --mf-surface: #fffdf7;
+  --mf-trough: #f6efe1;
+  --mf-shadow: 120 95 50;
+  --mf-accent: #a96f34;
+  --mf-accent-strong: #8d5a27;
+  --mf-accent-soft: 200 150 90;
+  --mf-ink: #3a3021;
+  --mf-secondary: #6d604a;
+  --mf-danger: #b1583f;
+  --mf-glass: rgba(255, 253, 247, 0.9);
+  --mf-glass-strong: #fffdf7;
+  --mf-glass-border: #e3d7c1;
+  --mf-glass-blur: 0px;
+  --mf-page: radial-gradient(760px 520px at 20% -10%, rgb(255 240 210 / 0.9), transparent 60%),
+    radial-gradient(700px 520px at 90% 110%, rgb(240 224 192 / 0.8), transparent 62%),
+    var(--mf-base);
+}
+html[data-skin='paper'].dark {
+  --mf-base: #17130f;
+  --mf-surface: #241d17;
+  --mf-trough: #1e1813;
+  --mf-accent: #d8a86a;
+  --mf-accent-strong: #b98b4e;
+  --mf-accent-soft: 200 150 90;
+  --mf-ink: #f3ebe0;
+  --mf-secondary: #b5a48c;
+  --mf-glass: rgba(36, 29, 23, 0.9);
+  --mf-glass-strong: rgba(42, 34, 27, 0.96);
+  --mf-glass-border: rgba(255, 255, 255, 0.1);
+  --mf-page: radial-gradient(700px 520px at 90% 110%, rgb(180 140 90 / 0.14), transparent 62%),
+    var(--mf-base);
+}
+
+/* 像素风格：硬阴影，去掉模糊玻璃 */
+html[data-skin='pixel'] .mf-raised,
+html[data-skin='pixel'] .mf-list,
+html[data-skin='pixel'] .mf-outline {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 3px 3px 0 var(--mf-glass-border);
+}
+html[data-skin='pixel'] .mf-pressable:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--mf-glass-border);
+}
+
 /* Tailwind 颜色工具类映射（bg-base / text-accent 等） */
 @theme inline {
   --color-base: var(--mf-base);

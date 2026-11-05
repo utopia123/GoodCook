@@ -31,6 +31,7 @@
 - 🏷️ **Custom dish categories** — family-wide, filterable dish page, badges on cards
 - 🌗 **Light / Dark theme** — three-state switch (light / dark / system), persisted per device
 - 🎨 **Five color schemes** — Green / Celadon / Caramel / Slate / Date red, each with light and dark, switchable in Me
+- 🎭 **Style skins** — Default / Clear glass / Panda / Pixel / Paper; a skin takes over colors, radius and shadows
 - 🔠 **Three text sizes** — Small / Default / Large, scaling the whole UI consistently on phone and desktop
 - 🗂️ **Batch management** — select dishes and move them into an existing or new category at once
 - 🧊 **Frosted-glass UI** — soft gradient background + glassmorphism on all surfaces

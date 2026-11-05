@@ -10,12 +10,14 @@ import {
   Paintbrush,
   Type,
   ListOrdered,
+  Sparkles,
 } from 'lucide-react'
 import { List, Row } from '@/components/ui/list'
 import { IconChip } from '@/components/ui/icon-chip'
 import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { PalettePicker } from '@/components/me/palette-picker'
+import { SkinPicker } from '@/components/me/skin-picker'
 import { UiScalePicker } from '@/components/me/ui-scale'
 import { InsightCountPicker } from '@/components/me/insight-count'
 import { ChangePassword } from '@/components/me/change-password'
@@ -44,6 +46,16 @@ export function SettingsList({
           }
           title={t('me.language')}
           trailing={<LanguageSwitch className="w-[136px]" />}
+          chevron={false}
+        />
+        <Row
+          leading={
+            <IconChip>
+              <Sparkles />
+            </IconChip>
+          }
+          title={t('skin.title')}
+          trailing={<SkinPicker />}
           chevron={false}
         />
         <Row
