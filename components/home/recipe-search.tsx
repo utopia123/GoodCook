@@ -116,6 +116,9 @@ export function RecipeSearch() {
       return
     }
 
+    // 先在同一次点击里占位开窗（否则 setTimeout 内的 window.open 会被拦截）
+    const placeholder = window.open('about:blank', '_blank')
+
     let leftPage = false
     const markLeft = () => {
       leftPage = true
@@ -129,7 +132,7 @@ export function RecipeSearch() {
       `${kw} 菜谱`,
     )}`
 
-    // 2.4s 后：页面仍在前台且未失焦，才认为未安装，回退 Bing
+    // 2.4s 后：页面仍在前台且未失焦 → 未安装，用占位窗口打开 Bing；否则关掉占位窗口
     window.setTimeout(() => {
       document.removeEventListener('visibilitychange', markLeft)
       window.removeEventListener('blur', markLeft)
@@ -139,7 +142,14 @@ export function RecipeSearch() {
         document.visibilityState === 'visible' &&
         document.hasFocus()
       if (stillHere) {
-        window.open(fallback, '_blank', 'noopener,noreferrer')
+        if (placeholder) placeholder.location.replace(fallback)
+        else window.location.href = fallback
+      } else {
+        try {
+          placeholder?.close()
+        } catch {
+          // 忽略：窗口可能已被系统接管
+        }
       }
     }, 2400)
   }
@@ -188,7 +198,7 @@ export function RecipeSearch() {
         ))}
       </div>
 
-      {biliAsk && (
+      {biliAsk && platform === 'bili' && pendingKw && (
         <div className="mt-2.5 rounded-xl border border-[var(--mf-glass-border)] p-2.5">
           <p className="mb-2 text-[11px] text-secondary">
             {t('search.biliAsk')}

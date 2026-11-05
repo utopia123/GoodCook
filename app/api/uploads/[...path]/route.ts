@@ -20,12 +20,16 @@ export async function GET(
   if (rel.startsWith('..') || rel.includes('..')) {
     return new Response('Not found', { status: 404 })
   }
+  // 只允许图片类型，避免把目录里的其它文件当静态资源吐出
+  const type = TYPES[extname(rel).toLowerCase()]
+  if (!type) return new Response('Not found', { status: 404 })
+
   try {
     const data = await readFile(join(UPLOAD_DIR, rel))
-    const type = TYPES[extname(rel).toLowerCase()] || 'application/octet-stream'
     return new Response(new Uint8Array(data), {
       headers: {
         'Content-Type': type,
+        'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
     })
