@@ -15,6 +15,30 @@ const PLATFORMS: { id: Platform; labelKey: string }[] = [
 ]
 
 const KEY = 'goodcook-search-platform'
+const BILI_KEY = 'goodcook-bili-region'
+
+type BiliRegion = '' | 'cn' | 'global'
+
+function readBiliRegion(): BiliRegion {
+  const v = localStorage.getItem(BILI_KEY)
+  return v === 'cn' || v === 'global' ? v : ''
+}
+
+function subscribeBili(cb: () => void) {
+  window.addEventListener('storage', cb)
+  window.addEventListener('goodcook-bili', cb)
+  return () => {
+    window.removeEventListener('storage', cb)
+    window.removeEventListener('goodcook-bili', cb)
+  }
+}
+
+function biliUrl(region: Exclude<BiliRegion, ''>, q: string) {
+  const kw = encodeURIComponent(`${q} 菜谱`)
+  return region === 'global'
+    ? `https://www.bilibili.tv/en/search-result?q=${kw}`
+    : `https://search.bilibili.com/all?keyword=${kw}`
+}
 
 function readPlatform(): Platform {
   const v = localStorage.getItem(KEY)
@@ -30,9 +54,9 @@ function subscribePlatform(cb: () => void) {
   }
 }
 
-function urlFor(platform: Platform, q: string) {
+function urlFor(platform: Platform, q: string, bili: BiliRegion = 'cn') {
   if (platform === 'bili') {
-    return `https://search.bilibili.com/all?keyword=${encodeURIComponent(`${q} 菜谱`)}`
+    return biliUrl(bili === 'global' ? 'global' : 'cn', q)
   }
   if (platform === 'xhs') {
     // 小红书网页版搜索未登录会 404，改用 Bing 站内检索，稳定可达
@@ -45,6 +69,13 @@ function urlFor(platform: Platform, q: string) {
 export function RecipeSearch() {
   const t = useT()
   const [q, setQ] = useState('')
+  const [biliAsk, setBiliAsk] = useState(false)
+  const [pendingKw, setPendingKw] = useState('')
+  const biliRegion = useSyncExternalStore(
+    subscribeBili,
+    readBiliRegion,
+    () => '' as BiliRegion,
+  )
   // 平台偏好从 localStorage 读取；避免在 effect 中同步 setState
   const platform = useSyncExternalStore(
     subscribePlatform,
@@ -60,8 +91,18 @@ export function RecipeSearch() {
   const search = () => {
     const kw = q.trim()
     if (!kw) return
+    if (platform === 'bili') {
+      if (!biliRegion) {
+        setPendingKw(kw)
+        setBiliAsk(true)
+        return
+      }
+      window.open(biliUrl(biliRegion, kw), '_blank', 'noopener,noreferrer')
+      return
+    }
+
     if (platform !== 'xhs') {
-      window.open(urlFor(platform, kw), '_blank', 'noopener,noreferrer')
+      window.open(urlFor(platform, kw, biliRegion), '_blank', 'noopener,noreferrer')
       return
     }
 
@@ -76,23 +117,31 @@ export function RecipeSearch() {
     }
 
     let leftPage = false
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') leftPage = true
+    const markLeft = () => {
+      leftPage = true
     }
-    document.addEventListener('visibilitychange', onVisibility)
+    document.addEventListener('visibilitychange', markLeft)
+    window.addEventListener('blur', markLeft)
+    window.addEventListener('pagehide', markLeft)
 
     // 尝试唤起小红书 App 的搜索页
     window.location.href = `xhsdiscover://search/result?keyword=${encodeURIComponent(
       `${kw} 菜谱`,
     )}`
 
-    // 1.2s 后仍在页面 → 视为未安装，回退到 Bing 站内检索
+    // 2.4s 后：页面仍在前台且未失焦，才认为未安装，回退 Bing
     window.setTimeout(() => {
-      document.removeEventListener('visibilitychange', onVisibility)
-      if (!leftPage && document.visibilityState === 'visible') {
+      document.removeEventListener('visibilitychange', markLeft)
+      window.removeEventListener('blur', markLeft)
+      window.removeEventListener('pagehide', markLeft)
+      const stillHere =
+        !leftPage &&
+        document.visibilityState === 'visible' &&
+        document.hasFocus()
+      if (stillHere) {
         window.open(fallback, '_blank', 'noopener,noreferrer')
       }
-    }, 1200)
+    }, 2400)
   }
 
   return (
@@ -138,6 +187,31 @@ export function RecipeSearch() {
           </button>
         ))}
       </div>
+
+      {biliAsk && (
+        <div className="mt-2.5 rounded-xl border border-[var(--mf-glass-border)] p-2.5">
+          <p className="mb-2 text-[11px] text-secondary">
+            {t('search.biliAsk')}
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {(['cn', 'global'] as const).map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => {
+                  localStorage.setItem(BILI_KEY, r)
+                  window.dispatchEvent(new Event('goodcook-bili'))
+                  setBiliAsk(false)
+                  window.open(biliUrl(r, pendingKw), '_blank', 'noopener,noreferrer')
+                }}
+                className="h-9 rounded-lg border border-[var(--mf-glass-border)] text-[13px] text-ink"
+              >
+                {t(r === 'cn' ? 'search.biliCn' : 'search.biliGlobal')}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {platform === 'xhs' && (
         <p className="mt-2 text-[11px] leading-relaxed text-secondary">
