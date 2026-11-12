@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { asc, eq, sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '@/lib/db/client'
 import { dishCategories } from '@/lib/db/schema'
 import { getCurrentUser } from '@/lib/auth/user'
@@ -89,10 +89,3 @@ export async function deleteCategory(id: string): Promise<ActionResult> {
   return { ok: true }
 }
 
-export async function listCategories() {
-  return db
-    .select()
-    .from(dishCategories)
-    .orderBy(asc(dishCategories.sortOrder))
-    .all()
-}

@@ -79,4 +79,3 @@ export async function getSession(): Promise<SessionPayload | null> {
   return verifySession(store.get(COOKIE)?.value)
 }
 
-export const SESSION_COOKIE = COOKIE
