@@ -32,7 +32,8 @@
 - 🌗 **Light / Dark theme** — three-state switch (light / dark / system), persisted per device
 - 🎨 **Theme panel** — five palettes (Green / Celadon / Caramel / Slate / Date red) × four styles, all in one Theme dialog
 - 🔎 **Recipe search** — search on Bing / Bilibili / RED straight from home
-- 🎭 **Style skins** — Default / Clear glass / Panda / Pixel / Paper; a skin takes over colors, radius and shadows
+- 🎭 **Style skins** — Default / Clear glass / Panda / Pixel / Paper / Flat; a skin takes over colors, radius and shadows
+- ⚡ **Flat skin** — no blur, no shadows, 1.5px outlines; noticeably smoother on low-end phones
 - 🧱 **Adjustable tab bar opacity** — live slider in Me
 - 🔠 **Three text sizes** — Small / Default / Large, scaling the whole UI consistently on phone and desktop
 - 🗂️ **Batch management** — select dishes and move them into an existing or new category at once
@@ -42,7 +43,7 @@
 - 🔍 **Two-way ordering filter** — filter the dish picker by category + tag together
 - 🧂 **Pantry** — aromatics / spices / seasonings sections with effect, best pairings and what to avoid (51 common items preloaded)
 - 📖 **Recipes** — your own recipes (ingredients + steps + time + difficulty), 10 popular dishes preloaded
-- 📊 **Dish insights** — most ordered / not had lately (≥14 days) / never ordered, shown on home, horizontally scrollable on phones, rows configurable in Me (3/5/8)
+- 📊 **Dish insights** — most ordered / not had lately (≥14 days) as rows on home, each with its reason, never-ordered count in the footer, rows configurable in Me (3/5/8)
 - 🍽️ **Smarter ordering** — search dishes; "hot" and "not had lately" appear as thumbnail cards you can open and add directly
 - 💾 **Daily automatic backups** — database + images + secrets, scheduled and rotated
 - 🚫 Removed the contribution-wall module
