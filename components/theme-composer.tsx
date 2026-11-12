@@ -30,6 +30,7 @@ const SKINS: { id: Skin; dots: string[] }[] = [
   { id: 'panda', dots: ['#14181a', '#6cbf8b', '#eef2f0'] },
   { id: 'pixel', dots: ['#8fd1f7', '#c1442e', '#f0b429'] },
   { id: 'paper', dots: ['#fbf7ee', '#a96f34', '#e3d7c1'] },
+  { id: 'flat', dots: ['#ffffff', '#161b18', '#2f7a48'] },
 ]
 
 /** 主题面板：风格 + 配色合并在一个入口 */

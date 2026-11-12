@@ -425,6 +425,71 @@ html[data-skin='paper'].dark {
     var(--mf-base);
 }
 
+/* C3 极简（去装饰）：纯色 + 1px 描边，无模糊无投影，性能最省 */
+html[data-skin='flat'] {
+  --radius: 10px;
+  --mf-base: #ffffff;
+  --mf-surface: #ffffff;
+  --mf-trough: #f4f5f4;
+  --mf-shadow: 26 32 28;
+  --mf-accent: #2f7a48;
+  --mf-accent-strong: #27663c;
+  --mf-accent-deep: #1f5531;
+  --mf-accent-soft: 47 122 72;
+  --mf-tint: #eef4f0;
+  --mf-ink: #161b18;
+  --mf-secondary: #5f6a63;
+  --mf-danger: #c2504b;
+  --mf-warn: #b8802c;
+  --mf-glass: #ffffff;
+  --mf-glass-strong: #ffffff;
+  --mf-glass-border: rgba(22, 27, 24, 0.12);
+  --mf-glass-blur: 0px;
+  --mf-page: #ffffff;
+}
+html[data-skin='flat'].dark {
+  --mf-base: #0e1110;
+  --mf-surface: #151917;
+  --mf-trough: #1b211e;
+  --mf-accent: #6fc488;
+  --mf-accent-strong: #4ea96b;
+  --mf-accent-deep: #3c9157;
+  --mf-accent-soft: 111 196 136;
+  --mf-tint: #16241c;
+  --mf-ink: #e9efeb;
+  --mf-secondary: #9aa8a0;
+  --mf-danger: #e0746e;
+  --mf-warn: #d9a353;
+  --mf-glass: #151917;
+  --mf-glass-strong: #1b211e;
+  --mf-glass-border: rgba(255, 255, 255, 0.12);
+  --mf-page: #0e1110;
+}
+
+/* 极简：抹掉所有模糊与投影，只留描边 */
+html[data-skin='flat'] .mf-raised,
+html[data-skin='flat'] .mf-list,
+html[data-skin='flat'] .mf-outline,
+html[data-skin='flat'] .mf-trough,
+html[data-skin='flat'] .mf-bump,
+html[data-skin='flat'] .mf-nav {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+html[data-skin='flat'] .mf-raised {
+  border: 1.5px solid var(--mf-glass-border);
+}
+html[data-skin='flat'] .mf-inset {
+  background: var(--mf-trough);
+  border: 1px solid var(--mf-glass-border);
+  box-shadow: none;
+}
+html[data-skin='flat'] .mf-nav {
+  background: var(--mf-surface);
+  border-radius: 12px;
+}
+
 /* 像素风格：硬阴影，去掉模糊玻璃 */
 html[data-skin='pixel'] .mf-raised,
 html[data-skin='pixel'] .mf-list,

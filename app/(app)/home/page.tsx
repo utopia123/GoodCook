@@ -16,7 +16,7 @@ import { RecipeSearch } from '@/components/home/recipe-search'
 import { ThemeComposer } from '@/components/theme-composer'
 import { getInsightCount } from '@/lib/settings'
 import { dishHeat } from '@/lib/insights'
-import { DishInsights, type InsightCard } from '@/components/dishes/dish-insights'
+import { DishInsights, type HeatRow } from '@/components/dishes/dish-insights'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,26 +78,19 @@ export default async function HomePage() {
     }))
   const neverCount = heat.filter((h) => h.count === 0).length
 
-  const insightCards: InsightCard[] =
-    hotItems.length || staleItems.length
-      ? [
-          ...(hotItems.length
-            ? [{ kind: 'hot' as const, label: t('dishes.insights.hot'), items: hotItems }]
-            : []),
-          ...(staleItems.length
-            ? [{ kind: 'stale' as const, label: t('dishes.insights.stale'), items: staleItems }]
-            : []),
-          ...(neverCount > 0
-            ? [
-                {
-                  kind: 'never' as const,
-                  label: t('dishes.insights.never'),
-                  items: [{ name: t('dishes.insights.dishes', { n: neverCount }) }],
-                },
-              ]
-            : []),
-        ]
-      : []
+  // 行式热度：常点在前、久未吃在后，最多取 insightN + 2 条，避免首屏被撑满
+  const heatRows: HeatRow[] = [
+    ...hotItems.map((h) => ({
+      name: h.name,
+      meta: h.meta,
+      kind: 'hot' as const,
+    })),
+    ...staleItems.map((h) => ({
+      name: h.name,
+      meta: h.meta,
+      kind: 'stale' as const,
+    })),
+  ].slice(0, insightN + 2)
 
   return (
     <>
@@ -122,12 +115,23 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {insightCards.length > 0 && (
+      {heatRows.length > 0 && (
         <section className="mb-6">
           <h2 className="mf-section mb-2.5 text-[15px] text-ink">
             {t('home.insights')}
           </h2>
-          <DishInsights cards={insightCards} />
+          <DishInsights
+            rows={heatRows}
+            footer={
+              neverCount > 0
+                ? {
+                    text: t('dishes.insights.dishes', { n: neverCount }),
+                    href: '/dishes',
+                    label: t('home.goDishes'),
+                  }
+                : undefined
+            }
+          />
         </section>
       )}
 

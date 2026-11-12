@@ -11,7 +11,13 @@ import {
 export type Theme = 'light' | 'dark' | 'system'
 export type Palette = 'green' | 'celadon' | 'caramel' | 'slate' | 'wine'
 export type UiScale = 'sm' | 'md' | 'lg'
-export type Skin = 'classic' | 'glass' | 'panda' | 'pixel' | 'paper'
+export type Skin =
+  | 'classic'
+  | 'glass'
+  | 'panda'
+  | 'pixel'
+  | 'paper'
+  | 'flat'
 
 const THEME_KEY = 'goodcook-theme'
 const PALETTE_KEY = 'goodcook-palette'
