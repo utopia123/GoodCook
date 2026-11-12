@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef, useState, useSyncExternalStore } from 'react'
-import { Search, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { useState, useSyncExternalStore } from 'react'
+import { SearchInput } from '@/components/ui/search-input'
 import { useT } from '@/components/i18n-provider'
 import { searchBili, searchBing, searchXhs } from '@/lib/link-out'
 import { cn } from '@/lib/utils'
@@ -35,7 +34,6 @@ function subscribePlatform(cb: () => void) {
 export function RecipeSearch() {
   const t = useT()
   const [q, setQ] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
   // 平台偏好从 localStorage 读取；避免在 effect 中同步 setState
   const platform = useSyncExternalStore(
     subscribePlatform,
@@ -66,40 +64,28 @@ export function RecipeSearch() {
   return (
     <div className="mf-raised mb-5 p-3.5">
       <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-accent" />
-          <Input
-            ref={inputRef}
-            className="h-12 pl-10 pr-10 text-[15px] font-medium"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') search()
-            }}
-            placeholder={t('search.placeholder')}
-            enterKeyHint="search"
-          />
-          {q && (
-            <button
-              type="button"
-              onClick={() => {
-                setQ('')
-                inputRef.current?.focus()
-              }}
-              aria-label={t('search.clear')}
-              className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-[var(--mf-trough)] hover:text-ink"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+        <SearchInput
+          className="flex-1"
+          value={q}
+          onChange={setQ}
+          placeholder={t('search.placeholder')}
+          inputClassName="h-12 text-[15px] font-medium"
+          accent
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') search()
+          }}
+        />
         <button
           type="button"
           onClick={search}
           disabled={!q.trim()}
-          className="mf-accent-fill h-12 shrink-0 rounded-xl px-5 text-[15px] font-semibold text-white shadow-[0_6px_16px_rgb(var(--mf-shadow)/0.28)] transition-transform active:scale-[0.97] disabled:opacity-40"
+          className="mf-accent-fill h-12 shrink-0 whitespace-nowrap rounded-xl px-3.5 text-[14px] font-semibold text-white shadow-[0_6px_16px_rgb(var(--mf-shadow)/0.28)] transition-transform active:scale-[0.97] disabled:opacity-40"
         >
-          {t('search.go')}
+          {platform === 'xhs'
+            ? t('search.goXhs')
+            : platform === 'bili'
+              ? t('search.goBili')
+              : t('search.go')}
         </button>
       </div>
 

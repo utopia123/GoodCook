@@ -7,7 +7,6 @@ import {
   Check,
   Clock,
   Flame,
-  Search,
   SlidersHorizontal,
   Soup,
   X,
@@ -17,7 +16,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/ui/search-input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useT } from '@/components/i18n-provider'
@@ -146,15 +145,12 @@ export function OrderPicker({
     <div>
       {/* 搜索 + 筛选入口 */}
       <div className="mb-3 flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
-          <Input
-            className="pl-9"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t('picker.searchDish')}
-          />
-        </div>
+        <SearchInput
+          className="flex-1"
+          value={q}
+          onChange={setQ}
+          placeholder={t('picker.searchDish')}
+        />
         <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
           <DialogTrigger asChild>
             <button

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BookHeart, Minus, Plus, RotateCw, Shuffle, Tv } from 'lucide-react'
 import { useT } from '@/components/i18n-provider'
 import { searchBili, searchXhs } from '@/lib/link-out'
@@ -28,26 +28,52 @@ export function DishRoulette({ dishes }: { dishes: RouletteDish[] }) {
   const [withSoup, setWithSoup] = useState(true)
   const [picked, setPicked] = useState<RouletteDish[]>([])
   const [spinning, setSpinning] = useState(false)
+  const [rolling, setRolling] = useState<string[]>([])
+  const [round, setRound] = useState(0)
   const [short, setShort] = useState(false)
   const [missSoup, setMissSoup] = useState(false)
+  const tickRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (tickRef.current) window.clearInterval(tickRef.current)
+    }
+  }, [])
 
   const mains = dishes.filter((d) => !d.soup)
   const soups = dishes.filter((d) => d.soup)
   const empty = dishes.length === 0
 
   const spin = () => {
-    if (empty) return
+    if (empty || spinning) return
     setSpinning(true)
-    // 短暂转一下再出结果，给「摇」一个反馈（系统减少动效时也只是不转圈）
+
+    // 系统开了「减少动效」就不滚，直接落定
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // 先「滚动」几下再落定：菜名快速换，视觉上像转盘在转
+    const rowCount = Math.min(
+      dishes.length,
+      Math.max(3, Math.min(diners, mains.length) + (withSoup && soups.length > 0 ? 1 : 0)),
+    )
+    if (!reduce) {
+      tickRef.current = window.setInterval(() => {
+        setRolling(sample(dishes, rowCount).map((d) => d.name))
+      }, 70)
+    }
+
     window.setTimeout(() => {
+      if (tickRef.current) window.clearInterval(tickRef.current)
       const wanted = Math.min(diners, mains.length)
       const mainPicked = sample(mains, wanted)
       const soupPicked = withSoup ? sample(soups, 1) : []
       setPicked([...mainPicked, ...soupPicked])
       setShort(wanted < diners)
       setMissSoup(withSoup && soups.length === 0)
+      setRolling([])
+      setRound((n) => n + 1)
       setSpinning(false)
-    }, 480)
+    }, reduce ? 180 : 700)
   }
 
   const mainCount = picked.filter((d) => !d.soup).length
@@ -114,7 +140,11 @@ export function DishRoulette({ dishes }: { dishes: RouletteDish[] }) {
           className="mf-accent-fill ml-auto flex h-9 items-center gap-1.5 rounded-xl px-4 text-[13px] font-semibold text-white transition-transform active:scale-[0.97] disabled:opacity-40"
         >
           <RotateCw className={cn('h-4 w-4', spinning && 'animate-spin')} />
-          {picked.length === 0 ? t('roulette.spin') : t('roulette.again')}
+          {spinning
+            ? t('roulette.spinning')
+            : picked.length === 0
+              ? t('roulette.spin')
+              : t('roulette.again')}
         </button>
       </div>
 
@@ -122,43 +152,66 @@ export function DishRoulette({ dishes }: { dishes: RouletteDish[] }) {
         <p className="mt-3 text-[13px] text-secondary">{t('roulette.empty')}</p>
       )}
 
-      {picked.length > 0 && (
+      {(spinning || picked.length > 0) && (
         <>
-          <p className="mt-3 text-[11px] text-secondary">
-            {t('roulette.summary', { n: mainCount })}
-            {picked.length > mainCount && ` · ${t('roulette.oneSoup')}`}
-            {short && ` · ${t('roulette.short')}`}
-            {missSoup && ` · ${t('roulette.noSoupDish')}`}
-          </p>
-          <ol className="mf-stagger mt-2 space-y-1.5">
-            {picked.map((d) => (
-              <li
-                key={d.id}
-                className="flex items-center gap-2 rounded-xl bg-[var(--mf-trough)] px-3 py-2"
-              >
-                <span className="min-w-0 flex-1 truncate text-[15px] text-ink">
-                  {d.name}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => searchXhs(`${d.name} 做法`)}
-                  aria-label={t('roulette.searchXhs')}
-                  title={t('roulette.searchXhs')}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#e8455f] transition-colors hover:bg-[var(--mf-surface)]"
-                >
-                  <BookHeart className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => searchBili(`${d.name} 做法`)}
-                  aria-label={t('roulette.searchBili')}
-                  title={t('roulette.searchBili')}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#3fa9d9] transition-colors hover:bg-[var(--mf-surface)]"
-                >
-                  <Tv className="h-4 w-4" />
-                </button>
-              </li>
-            ))}
+          {!spinning && (
+            <p className="mt-3 text-[11px] text-secondary">
+              {t('roulette.summary', { n: mainCount })}
+              {picked.length > mainCount && ` · ${t('roulette.oneSoup')}`}
+              {short && ` · ${t('roulette.short')}`}
+              {missSoup && ` · ${t('roulette.noSoupDish')}`}
+            </p>
+          )}
+          <ol
+            key={spinning ? 'rolling' : round}
+            className={cn(
+              'mt-2 space-y-1.5',
+              !spinning && 'mf-stagger',
+            )}
+          >
+            {spinning
+              ? (rolling.length > 0 ? rolling : picked.map((d) => d.name)).map(
+                  (name, i) => (
+                    <li
+                      key={`${name}-${i}`}
+                      className="flex min-h-[38px] items-center gap-2 rounded-xl bg-[var(--mf-trough)] px-3 py-2 opacity-60 blur-[1.2px]"
+                    >
+                      <span className="min-w-0 flex-1 truncate text-[15px] text-ink">
+                        {name}
+                      </span>
+                      <span className="h-7 w-7 shrink-0 rounded-full bg-[var(--mf-glass-border)]" />
+                      <span className="h-7 w-7 shrink-0 rounded-full bg-[var(--mf-glass-border)]" />
+                    </li>
+                  ),
+                )
+              : picked.map((d) => (
+                  <li
+                    key={d.id}
+                    className="flex min-h-[38px] items-center gap-2 rounded-xl bg-[var(--mf-trough)] px-3 py-2"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-[15px] text-ink">
+                      {d.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => searchXhs(`${d.name} 做法`)}
+                      aria-label={t('roulette.searchXhs')}
+                      title={t('roulette.searchXhs')}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#e8455f] transition-colors hover:bg-[var(--mf-surface)]"
+                    >
+                      <BookHeart className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => searchBili(`${d.name} 做法`)}
+                      aria-label={t('roulette.searchBili')}
+                      title={t('roulette.searchBili')}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#3fa9d9] transition-colors hover:bg-[var(--mf-surface)]"
+                    >
+                      <Tv className="h-4 w-4" />
+                    </button>
+                  </li>
+                ))}
           </ol>
         </>
       )}
