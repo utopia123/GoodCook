@@ -39,8 +39,9 @@
 - 🗂️ **Batch management** — select dishes and move them into an existing or new category at once
 - 🧊 **Frosted-glass UI** — soft gradient background + glassmorphism on all surfaces
 - 💻 **Native desktop layout** — sidebar nav + full-width content, two-column card grids
+- 📱 **Immersive mobile** — notch/safe-area aware, status bar tinted to the theme; near edge-to-edge once added to the home screen
 - 📦 **Dish backup as zip** — dish JSON + all images; import accepts zip and JSON
-- 🔍 **Two-way ordering filter** — filter the dish picker by category + tag together
+- 🔍 **Two-way ordering filter** — categories stay inline above the grid, tags live in a Filter sheet; both stack
 - 🧂 **Pantry** — aromatics / spices / seasonings sections with effect, best pairings and what to avoid (51 common items preloaded)
 - 📖 **Recipes** — your own recipes (ingredients + steps + time + difficulty), 10 popular dishes preloaded
 - 📊 **Dish insights** — most ordered / not had lately (≥14 days) as rows on home, each with its reason, never-ordered count in the footer, rows configurable in Me (3/5/8)
