@@ -17,6 +17,13 @@ export const metadata: Metadata = {
     apple: '/apple-icon.png',
   },
   manifest: '/manifest.json',
+  // 添加到主屏后：状态栏底色跟随主题，文字保持可读（不用 black-translucent，
+  // 那会让状态栏文字强制变白，浅色主题下看不清）
+  appleWebApp: {
+    capable: true,
+    title: 'GoodCook',
+    statusBarStyle: 'default',
+  },
 }
 
 export const viewport: Viewport = {
@@ -24,6 +31,8 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: '#f2f5f1' },
     { media: '(prefers-color-scheme: dark)', color: '#121518' },
   ],
+  // cover：允许页面延伸到刘海与状态栏区域（配合安全区留白）
+  viewportFit: 'cover',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

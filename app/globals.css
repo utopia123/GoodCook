@@ -849,3 +849,20 @@ html[data-skin='pixel'] .mf-nav {
     animation: none !important;
   }
 }
+
+/* ───────── 沉浸式状态栏 / 刘海安全区 ─────────
+   viewport-fit=cover 后页面可以画到状态栏下面：
+   - 横屏时避开左右刘海
+   - 主屏（standalone）时顶部留出状态栏高度，背景仍然铺满
+   ─────────────────────────────────────── */
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  @media (display-mode: standalone) {
+    body {
+      padding-top: env(safe-area-inset-top);
+    }
+  }
+}

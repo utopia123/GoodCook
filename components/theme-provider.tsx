@@ -34,6 +34,25 @@ function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle('dark', dark)
   // 让原生控件、滚动条、输入框跟随明暗
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
+  syncThemeColor()
+}
+
+/**
+ * 同步 theme-color：iOS Safari 的顶栏、Android Chrome 的状态栏都读这个值。
+ * 换主题/换皮肤后重算，避免系统浅色但应用深色时顶栏还是白的。
+ */
+function syncThemeColor() {
+  try {
+    const base = getComputedStyle(document.documentElement)
+      .getPropertyValue('--mf-base')
+      .trim()
+    if (!base) return
+    document
+      .querySelectorAll('meta[name="theme-color"]')
+      .forEach((m) => m.setAttribute('content', base))
+  } catch {
+    // 拿不到计算值就算了，不影响页面
+  }
 }
 
 /** 当前存的是「跟随系统」吗（直接读存储，避免闭包里的旧值） */
@@ -43,6 +62,7 @@ function isSystemMode() {
 
 function applyPalette(palette: Palette) {
   document.documentElement.dataset.theme = palette
+  syncThemeColor()
 }
 
 function applyNavAlpha(alpha: number) {
@@ -52,6 +72,7 @@ function applyNavAlpha(alpha: number) {
 function applySkin(skin: Skin) {
   if (skin === 'classic') delete document.documentElement.dataset.skin
   else document.documentElement.dataset.skin = skin
+  syncThemeColor()
 }
 
 function applyScale(scale: UiScale) {
