@@ -106,7 +106,8 @@ export function OrderPicker({
     suggestRow.push({ h, kind: 'stale' })
   }
 
-  const activeCount = (activeCat ? 1 : 0) + (activeTag ? 1 : 0)
+  // 分类已提到页面上常驻，抽屉里只剩标签，角标只数标签
+  const activeCount = activeTag ? 1 : 0
 
   const toggle = (dishId: string) => {
     const next = new Set(selected)
@@ -170,38 +171,6 @@ export function OrderPicker({
             <div className="space-y-4">
               <div>
                 <p className="mb-2 text-xs font-medium text-secondary">
-                  {t('picker.groupCategory')}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Chip active={!activeCat} onClick={() => setActiveCat('')}>
-                    {t('dishes.all')}
-                  </Chip>
-                  {shownCats.map((c) => (
-                    <Chip
-                      key={c.id}
-                      active={activeCat === c.id}
-                      onClick={() =>
-                        setActiveCat(activeCat === c.id ? '' : c.id)
-                      }
-                    >
-                      {c.name}
-                    </Chip>
-                  ))}
-                  {hasUncategorized && (
-                    <Chip
-                      active={activeCat === 'none'}
-                      onClick={() =>
-                        setActiveCat(activeCat === 'none' ? '' : 'none')
-                      }
-                    >
-                      {t('dishes.uncategorized')}
-                    </Chip>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-2 text-xs font-medium text-secondary">
                   {t('picker.groupTag')}
                 </p>
                 <div className="flex max-h-[38vh] flex-wrap gap-2 overflow-y-auto">
@@ -226,12 +195,9 @@ export function OrderPicker({
                 <Button
                   variant="trough"
                   className="flex-1"
-                  onClick={() => {
-                    setActiveCat('')
-                    setActiveTag('')
-                  }}
+                  onClick={() => setActiveTag('')}
                 >
-                  {t('picker.clearFilter')}
+                  {t('picker.clearTags')}
                 </Button>
                 <Button className="flex-1" onClick={() => setFilterOpen(false)}>
                   {t('common.done')}
@@ -242,31 +208,17 @@ export function OrderPicker({
         </Dialog>
       </div>
 
-      {/* 已选筛选条件 */}
-      {activeCount > 0 && (
+      {/* 已选标签 */}
+      {activeTag && (
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          {activeCat && (
-            <button
-              type="button"
-              onClick={() => setActiveCat('')}
-              className="flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
-            >
-              {activeCat === 'none'
-                ? t('dishes.uncategorized')
-                : (categories.find((c) => c.id === activeCat)?.name ?? '')}
-              <X className="h-3 w-3" />
-            </button>
-          )}
-          {activeTag && (
-            <button
-              type="button"
-              onClick={() => setActiveTag('')}
-              className="flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
-            >
-              {activeTag}
-              <X className="h-3 w-3" />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setActiveTag('')}
+            className="flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"
+          >
+            {activeTag}
+            <X className="h-3 w-3" />
+          </button>
         </div>
       )}
 
@@ -337,6 +289,55 @@ export function OrderPicker({
               )
             })}
           </div>
+        </div>
+      )}
+
+      {/* 分类：常驻一行，横向滑动 */}
+      {(shownCats.length > 0 || hasUncategorized) && (
+        <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0">
+          <button
+            type="button"
+            onClick={() => setActiveCat('')}
+            className={cn(
+              'h-8 shrink-0 whitespace-nowrap rounded-full border px-3 text-[13px] transition-colors',
+              !activeCat
+                ? 'border-accent/40 bg-accent/15 font-semibold text-accent'
+                : 'border-[var(--mf-glass-border)] bg-[var(--mf-surface)] text-secondary',
+            )}
+          >
+            {t('dishes.all')}
+          </button>
+          {shownCats.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setActiveCat(activeCat === c.id ? '' : c.id)}
+              className={cn(
+                'h-8 shrink-0 whitespace-nowrap rounded-full border px-3 text-[13px] transition-colors',
+                activeCat === c.id
+                  ? 'border-accent/40 bg-accent/15 font-semibold text-accent'
+                  : 'border-[var(--mf-glass-border)] bg-[var(--mf-surface)] text-secondary',
+              )}
+            >
+              {c.name}
+            </button>
+          ))}
+          {hasUncategorized && (
+            <button
+              type="button"
+              onClick={() =>
+                setActiveCat(activeCat === 'none' ? '' : 'none')
+              }
+              className={cn(
+                'h-8 shrink-0 whitespace-nowrap rounded-full border px-3 text-[13px] transition-colors',
+                activeCat === 'none'
+                  ? 'border-accent/40 bg-accent/15 font-semibold text-accent'
+                  : 'border-[var(--mf-glass-border)] bg-[var(--mf-surface)] text-secondary',
+              )}
+            >
+              {t('dishes.uncategorized')}
+            </button>
+          )}
         </div>
       )}
 
