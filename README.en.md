@@ -29,9 +29,9 @@
 ## ✨ Changes vs upstream (GanCook)
 
 - 🏷️ **Custom dish categories** — family-wide, filterable dish page, badges on cards
-- 🌗 **Light / Dark theme** — three-state switch (light / dark / system), persisted per device
+- 🌗 **Light / Dark theme** — three-state switch (light / dark / auto), persisted per device
 - 🎨 **Theme panel** — five palettes (Green / Celadon / Caramel / Slate / Date red) × four styles, all in one Theme dialog
-- 🔎 **Recipe search** — search on Bing / Bilibili / RED straight from home
+- 🔎 **Recipe search** — search on Bing / Bilibili / RED straight from home; the button names the platform and the input clears in one tap
 - 🎭 **Style skins** — Default / Clear glass / Panda / Pixel / Paper / Flat; a skin takes over colors, radius and shadows
 - ⚡ **Flat skin** — no blur, no shadows, 1.5px outlines; noticeably smoother on low-end phones
 - 🧱 **Adjustable tab bar opacity** — live slider in Me
